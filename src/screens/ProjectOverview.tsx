@@ -25,7 +25,9 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
           <h1>Projekte</h1>
           <p className="muted">Alle laufenden Titel, Deadlines und Engpaesse in einer Produktionssicht.</p>
         </div>
-        <Button>Neues Projekt</Button>
+        <Button disabled title="Im Prototyp nicht umgesetzt">
+          Neues Projekt
+        </Button>
       </header>
 
       <div className="toolbar">
@@ -44,6 +46,7 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
               key={risk}
               type="button"
               className={`filter-chip${filters.risk === risk ? " is-active" : ""}`}
+              aria-pressed={filters.risk === risk}
               onClick={() => setFilters((current) => ({ ...current, risk }))}
             >
               {risk === "alle" ? "Alle" : risk}
@@ -67,19 +70,14 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
           </thead>
           <tbody>
             {visibleProjects.map((project) => (
-              <tr
-                key={project.id}
-                tabIndex={0}
-                onClick={() => onSelectProject(project.id)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    onSelectProject(project.id);
-                  }
-                }}
-              >
+              <tr key={project.id}>
                 <td>
-                  <button type="button" className="table-link" onClick={() => onSelectProject(project.id)}>
+                  <button
+                    type="button"
+                    className="table-link"
+                    aria-label={`${project.title} oeffnen`}
+                    onClick={() => onSelectProject(project.id)}
+                  >
                     {project.title}
                   </button>
                 </td>

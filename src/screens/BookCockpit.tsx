@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { ProgressBar } from "../components/ProgressBar";
 import { RiskDots } from "../components/RiskDots";
 import { StatusBadge } from "../components/StatusBadge";
@@ -9,11 +8,12 @@ import { CorrectionFlow } from "./CorrectionFlow";
 import { PreflightPanel } from "./PreflightPanel";
 import { TimelineRisk } from "./TimelineRisk";
 
-type BookTab = "overview" | "corrections" | "preflight" | "risk";
+export type BookTab = "overview" | "corrections" | "preflight" | "risk";
 
 interface BookCockpitProps {
   project: Project;
-  initialTab: BookTab;
+  activeTab: BookTab;
+  onTabChange: (tab: BookTab) => void;
 }
 
 const tabs: Array<{ id: BookTab; label: string }> = [
@@ -27,14 +27,9 @@ function getPersonName(personId: string) {
   return people.find((person) => person.id === personId)?.name ?? "Nicht zugewiesen";
 }
 
-export function BookCockpit({ project, initialTab }: BookCockpitProps) {
-  const [activeTab, setActiveTab] = useState<BookTab>(initialTab);
+export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProps) {
   const lead = people.find((person) => person.id === project.leadId);
   const team = people.filter((person) => project.team.includes(person.id));
-
-  useEffect(() => {
-    setActiveTab(initialTab);
-  }, [initialTab, project.id]);
 
   return (
     <section className="screen">
@@ -50,7 +45,7 @@ export function BookCockpit({ project, initialTab }: BookCockpitProps) {
         <StatusBadge status={project.status} />
       </header>
 
-      <Tabs items={tabs} activeId={activeTab} onChange={(id) => setActiveTab(id as BookTab)} />
+      <Tabs items={tabs} activeId={activeTab} onChange={onTabChange} />
 
       {activeTab === "overview" && (
         <div className="cockpit-grid">

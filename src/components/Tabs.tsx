@@ -1,16 +1,16 @@
-interface TabItem {
-  id: string;
+interface TabItem<TId extends string> {
+  id: TId;
   label: string;
   disabled?: boolean;
 }
 
-interface TabsProps {
-  items: TabItem[];
-  activeId: string;
-  onChange: (id: string) => void;
+interface TabsProps<TId extends string> {
+  items: ReadonlyArray<TabItem<TId>>;
+  activeId: TId;
+  onChange: (id: TId) => void;
 }
 
-export function Tabs({ items, activeId, onChange }: TabsProps) {
+export function Tabs<TId extends string>({ items, activeId, onChange }: TabsProps<TId>) {
   return (
     <div className="tabs" role="group" aria-label="Ansichten">
       {items.map((item) => (

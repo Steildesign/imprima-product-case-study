@@ -542,14 +542,8 @@ p {
   text-transform: uppercase;
 }
 
-.project-table tbody tr {
-  cursor: pointer;
-}
-
-.project-table tbody tr:hover,
-.project-table tbody tr:focus {
+.project-table tbody tr:hover {
   background: #f8faf8;
-  outline: none;
 }
 
 .table-link {
@@ -590,6 +584,11 @@ p {
   border: 1px dashed #d9dce2;
   border-radius: 8px;
   background: #fbfcfb;
+}
+
+.module-stub {
+  display: grid;
+  gap: 8px;
 }
 
 .correction-empty,

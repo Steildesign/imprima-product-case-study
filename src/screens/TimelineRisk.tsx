@@ -1,10 +1,24 @@
 import { RiskDots } from "../components/RiskDots";
 import { StatusBadge } from "../components/StatusBadge";
 import { getProjectRiskCounts } from "../domain/selectors";
-import type { Project } from "../domain/types";
+import type { Project, TimelinePhase } from "../domain/types";
 
 interface TimelineRiskProps {
   projects: Project[];
+}
+
+const TIMELINE_WEEK_OFFSET = 18;
+const TIMELINE_COLUMN_COUNT = 10;
+
+function clampTimelineLine(week: number) {
+  return Math.min(TIMELINE_COLUMN_COUNT + 1, Math.max(1, week - TIMELINE_WEEK_OFFSET));
+}
+
+function getTimelineGridColumn(phase: Pick<TimelinePhase, "startWeek" | "endWeek">) {
+  const start = Math.min(TIMELINE_COLUMN_COUNT, clampTimelineLine(phase.startWeek));
+  const end = Math.min(TIMELINE_COLUMN_COUNT + 1, Math.max(start + 1, clampTimelineLine(phase.endWeek)));
+
+  return `${start} / ${end}`;
 }
 
 export function TimelineRisk({ projects }: TimelineRiskProps) {
@@ -29,7 +43,7 @@ export function TimelineRisk({ projects }: TimelineRiskProps) {
                         key={`${project.id}-${phase.label}`}
                         className={`timeline-bar timeline-${phase.status}`}
                         style={{
-                          gridColumn: `${Math.max(1, phase.startWeek - 18)} / ${Math.max(2, phase.endWeek - 18)}`,
+                          gridColumn: getTimelineGridColumn(phase),
                         }}
                       >
                         {phase.label}

@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { Button } from "../components/Button";
 import { summarizePreflight } from "../domain/selectors";
-import type { Project } from "../domain/types";
+import type { PreflightState, Project } from "../domain/types";
 
 interface PreflightPanelProps {
   project: Project;
 }
 
-function getCheckLabel(state: string) {
-  if (state === "passed") {
-    return "Erfuellt";
-  }
-  if (state === "warning") {
-    return "Hinweis";
-  }
-  return "Fehler";
+const checkLabels: Record<PreflightState, string> = {
+  passed: "Erfuellt",
+  warning: "Hinweis",
+  failed: "Fehler",
+};
+
+function getCheckLabel(state: PreflightState) {
+  return checkLabels[state];
 }
 
 export function PreflightPanel({ project }: PreflightPanelProps) {
