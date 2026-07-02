@@ -40,7 +40,7 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
           />
         </label>
 
-        <div className="chip-group" aria-label="Risiko filtern">
+        <div className="chip-group" role="group" aria-label="Risiko filtern">
           {riskOptions.map((risk) => (
             <button
               key={risk}

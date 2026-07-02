@@ -31,12 +31,13 @@ export function CorrectionFlow({ project }: CorrectionFlowProps) {
 
   return (
     <div className="correction-layout">
-      <div className="stepper" aria-label="Korrektur- und Freigabe-Flow">
+      <div className="stepper" role="group" aria-label="Korrektur- und Freigabe-Flow">
         {project.correctionSteps.map((step, index) => (
           <button
             key={step.id}
             type="button"
             className={`step step-${step.state}${step.id === selectedStep?.id ? " is-selected" : ""}`}
+            aria-pressed={step.id === selectedStep?.id}
             onClick={() => setSelectedStepId(step.id)}
           >
             <span>{index + 1}</span>
