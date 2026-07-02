@@ -42,7 +42,7 @@ export function getProjectRiskCounts(projects: Project[]): Record<RiskLevel, num
 }
 
 export function getActiveCorrectionStep(project: Project): CorrectionStep | undefined {
-  return project.correctionSteps.find((step) => step.state === "active") ?? project.correctionSteps[0];
+  return project.correctionSteps.find((step) => step.state === "active");
 }
 
 export function summarizePreflight(checks: PreflightCheck[]): PreflightSummary {

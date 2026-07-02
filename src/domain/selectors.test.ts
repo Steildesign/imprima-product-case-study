@@ -74,11 +74,58 @@ describe("project selectors", () => {
     expect(visible.map((project) => project.id)).toEqual(["released"]);
   });
 
+  it("matches project queries against publisher and ISBN", () => {
+    const fixtureProjects = [
+      createProject({
+        id: "publisher-match",
+        title: "Typography Notes",
+        publisher: "Acme Press",
+        isbn: "978-3-111111-11-1",
+      }),
+      createProject({
+        id: "isbn-match",
+        title: "Layout Notes",
+        publisher: "Beta Books",
+        isbn: "978-3-222222-22-2",
+      }),
+    ];
+
+    expect(
+      getVisibleProjects(fixtureProjects, {
+        query: "acme",
+        risk: "alle",
+        status: "alle",
+      }).map((project) => project.id),
+    ).toEqual(["publisher-match"]);
+    expect(
+      getVisibleProjects(fixtureProjects, {
+        query: "222222-22",
+        risk: "alle",
+        status: "alle",
+      }).map((project) => project.id),
+    ).toEqual(["isbn-match"]);
+  });
+
   it("counts project risks for the production overview", () => {
     expect(getProjectRiskCounts(projects)).toEqual({
       hoch: 1,
       mittel: 2,
       niedrig: 2,
+    });
+  });
+
+  it("counts project risks for synthetic projects", () => {
+    expect(
+      getProjectRiskCounts([
+        createProject({ id: "low-a", risk: "niedrig" }),
+        createProject({ id: "medium-a", risk: "mittel" }),
+        createProject({ id: "medium-b", risk: "mittel" }),
+        createProject({ id: "high-a", risk: "hoch" }),
+      ]),
+    ).toEqual({
+      hoch: 1,
+      mittel: 2,
+      niedrig: 1,
     });
   });
 
@@ -99,13 +146,46 @@ describe("project selectors", () => {
     expect(step).toBeUndefined();
   });
 
-  it("summarizes preflight checks", () => {
-    const project = getProjectById(projects, "nachhaltig-handeln");
-    expect(summarizePreflight(project.preflight)).toEqual({
-      passed: 6,
+  it("returns undefined when all correction steps are done or planned", () => {
+    const step = getActiveCorrectionStep(
+      createProject({
+        correctionSteps: [
+          {
+            id: "done-step",
+            label: "V1",
+            owner: "Satz",
+            date: "01.06.",
+            state: "done",
+            note: "Complete",
+          },
+          {
+            id: "planned-step",
+            label: "Freigabe",
+            owner: "Herstellung",
+            date: "08.06.",
+            state: "planned",
+            note: "Planned",
+          },
+        ],
+      }),
+    );
+
+    expect(step).toBeUndefined();
+  });
+
+  it("summarizes mixed preflight checks", () => {
+    expect(
+      summarizePreflight([
+        { id: "pdfx", label: "PDF/X", state: "passed", details: "OK" },
+        { id: "wcag", label: "WCAG", state: "warning", details: "Review alt text" },
+        { id: "fonts", label: "Fonts", state: "failed", details: "Missing font" },
+        { id: "links", label: "Links", state: "passed", details: "OK" },
+      ]),
+    ).toEqual({
+      passed: 2,
       warning: 1,
-      failed: 0,
-      total: 7,
+      failed: 1,
+      total: 4,
     });
   });
 
