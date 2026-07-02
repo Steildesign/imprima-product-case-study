@@ -68,6 +68,7 @@ export interface Project {
   isbn: string;
   pages: number;
   deadline: string;
+  // Display copy used by the static mock data; keep deadline as the canonical date.
   deadlineLabel: string;
   progress: number;
   status: ProductionStatus;

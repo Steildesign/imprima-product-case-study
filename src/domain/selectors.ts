@@ -1,4 +1,11 @@
-import type { PreflightCheck, PreflightSummary, Project, ProjectFilters, RiskLevel } from "./types";
+import type {
+  CorrectionStep,
+  PreflightCheck,
+  PreflightSummary,
+  Project,
+  ProjectFilters,
+  RiskLevel,
+} from "./types";
 
 export function getProjectById(projects: Project[], id: string): Project {
   const project = projects.find((candidate) => candidate.id === id);
@@ -34,7 +41,7 @@ export function getProjectRiskCounts(projects: Project[]): Record<RiskLevel, num
   );
 }
 
-export function getActiveCorrectionStep(project: Project) {
+export function getActiveCorrectionStep(project: Project): CorrectionStep | undefined {
   return project.correctionSteps.find((step) => step.state === "active") ?? project.correctionSteps[0];
 }
 
