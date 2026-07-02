@@ -1039,3 +1039,277 @@ p {
     overflow-x: auto;
   }
 }
+
+.case-study {
+  max-width: 1360px;
+  margin: 0 auto;
+  color: var(--navy);
+}
+
+.case-hero {
+  min-height: 72vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) 360px;
+  align-items: center;
+  gap: 48px;
+  border-bottom: 1px solid #d9dce2;
+  padding: 38px 0 56px;
+}
+
+.case-hero .wordmark {
+  margin: 18px 0 28px;
+}
+
+.case-hero .wordmark-text {
+  font-size: 62px;
+  letter-spacing: 0.32em;
+}
+
+.case-hero h1 {
+  max-width: 760px;
+  margin: 0 0 18px;
+  font-size: 76px;
+  line-height: 0.95;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.case-hero p {
+  max-width: 720px;
+  color: #495266;
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.case-hero .button {
+  margin-top: 28px;
+}
+
+.case-meta {
+  border-left: 1px solid #d9dce2;
+  padding-left: 28px;
+}
+
+.case-meta dl,
+.case-meta div {
+  display: grid;
+  gap: 12px;
+}
+
+.case-meta dl {
+  margin: 0;
+}
+
+.case-meta dt {
+  color: var(--brand-green);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.case-meta dd {
+  margin: 0 0 14px;
+  font-weight: 800;
+}
+
+.case-section {
+  padding: 64px 0;
+  border-bottom: 1px solid #d9dce2;
+}
+
+.case-two-col {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 56px;
+}
+
+.case-section h2 {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.05;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.case-section p {
+  color: #495266;
+  line-height: 1.75;
+}
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.persona-grid h3 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.flow-band {
+  margin-inline: -28px;
+  padding-inline: 28px;
+  background: #ffffff;
+}
+
+.flow-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.flow-steps span {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d9dce2;
+  border-radius: 5px;
+  padding: 0 14px;
+  background: #ffffff;
+  font-weight: 800;
+}
+
+.decision-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.decision-grid > .eyebrow {
+  grid-column: 1 / -1;
+}
+
+.decision-card {
+  min-height: 160px;
+  border: 1px solid #d9dce2;
+  border-radius: 8px;
+  padding: 18px;
+  background: #ffffff;
+}
+
+.decision-card span {
+  color: var(--brand-green);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.decision-card p {
+  margin: 16px 0 0;
+  color: var(--navy);
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.system-board {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.system-board > div {
+  grid-row: span 2;
+}
+
+.system-board img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid #d9dce2;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.reflection {
+  max-width: 900px;
+  border-bottom: 0;
+}
+
+@media (max-width: 1040px) {
+  .case-hero,
+  .case-two-col,
+  .system-board {
+    grid-template-columns: 1fr;
+  }
+
+  .case-hero {
+    min-height: auto;
+    align-items: start;
+  }
+
+  .case-hero .wordmark-text {
+    font-size: 48px;
+    letter-spacing: 0.28em;
+  }
+
+  .case-hero h1 {
+    font-size: 54px;
+  }
+
+  .case-meta {
+    border-left: 0;
+    border-top: 1px solid #d9dce2;
+    padding-top: 26px;
+    padding-left: 0;
+  }
+
+  .case-meta dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .persona-grid,
+  .decision-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .system-board > div {
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 720px) {
+  .case-hero {
+    gap: 30px;
+    padding: 24px 0 42px;
+  }
+
+  .case-hero .wordmark {
+    gap: 12px;
+  }
+
+  .case-hero .wordmark-text {
+    font-size: 32px;
+    letter-spacing: 0.22em;
+  }
+
+  .case-hero h1 {
+    font-size: 38px;
+  }
+
+  .case-hero p {
+    font-size: 16px;
+  }
+
+  .case-section {
+    padding: 44px 0;
+  }
+
+  .case-section h2 {
+    font-size: 30px;
+  }
+
+  .case-meta dl,
+  .persona-grid,
+  .decision-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flow-band {
+    margin-inline: -18px;
+    padding-inline: 18px;
+  }
+}
