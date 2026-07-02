@@ -11,7 +11,7 @@ export function RiskDots({ risk }: RiskDotsProps) {
   const visual = getRiskVisual(risk);
 
   return (
-    <span className="risk-dots" aria-label={visual.label}>
+    <span className="risk-dots" role="img" aria-label={visual.label}>
       {order.map((level) => (
         <span
           key={level}
