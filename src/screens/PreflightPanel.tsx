@@ -63,9 +63,11 @@ export function PreflightPanel({ project }: PreflightPanelProps) {
         <p>
           {summary.passed} von {summary.total} Pruefpunkten erfuellt. {summary.warning} Hinweise und {summary.failed} Fehler offen.
         </p>
-        <Button onClick={() => setApproved(true)}>Druckfreigabe erteilen</Button>
+        <Button onClick={() => setApproved((current) => !current)}>
+          {approved ? "Druckfreigabe zuruecknehmen" : "Druckfreigabe erteilen"}
+        </Button>
         <Button variant="secondary">Bericht herunterladen</Button>
-        {approved && <p className="approval-note">Druckfreigabe im Prototyp erteilt.</p>}
+        {approved && <p className="approval-note">Druckfreigabe im Prototyp erteilt. Erneut klicken zum Zuruecknehmen.</p>}
       </aside>
     </div>
   );
