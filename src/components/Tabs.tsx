@@ -1,6 +1,7 @@
 interface TabItem {
   id: string;
   label: string;
+  disabled?: boolean;
 }
 
 interface TabsProps {
@@ -16,9 +17,14 @@ export function Tabs({ items, activeId, onChange }: TabsProps) {
         <button
           key={item.id}
           type="button"
+          disabled={item.disabled}
           aria-pressed={item.id === activeId}
           className={`tab${item.id === activeId ? " is-active" : ""}`}
-          onClick={() => onChange(item.id)}
+          onClick={() => {
+            if (!item.disabled) {
+              onChange(item.id);
+            }
+          }}
         >
           {item.label}
         </button>
