@@ -1137,6 +1137,13 @@ p {
   line-height: 1.75;
 }
 
+.case-section-heading {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 12px;
+  max-width: 860px;
+}
+
 .persona-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1159,9 +1166,11 @@ p {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 26px;
+  padding: 0;
+  list-style: none;
 }
 
-.flow-steps span {
+.flow-steps li {
   min-height: 42px;
   display: inline-flex;
   align-items: center;
@@ -1176,10 +1185,6 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
-}
-
-.decision-grid > .eyebrow {
-  grid-column: 1 / -1;
 }
 
 .decision-card {
@@ -1229,7 +1234,7 @@ p {
   border-bottom: 0;
 }
 
-@media (max-width: 1040px) {
+@media (max-width: 1240px) {
   .case-hero,
   .case-two-col,
   .system-board {

@@ -6,18 +6,30 @@ interface CaseStudyProps {
 }
 
 const decisions = [
-  "Eine Quelle der Wahrheit statt fuenf verstreuter Kanaele.",
+  "Eine Quelle der Wahrheit statt fünf verstreuter Kanäle.",
   "Ein eindeutiger Status je Kapitel erzwingt Klarheit im Team.",
   "Zustand, Risiko und Marke erhalten getrennte visuelle Rollen.",
   "Inter bleibt im Tool, weil Datendichte Ruhe und Lesbarkeit braucht.",
   "Barrierefreiheit ist ein Produkt-Schritt, kein Nachgedanke.",
-  "Gruen ist Zielzustand: Am Ende steht die Freigabe.",
+  "Grün ist Zielzustand: Am Ende steht die Freigabe.",
 ];
 
 const personas = [
-  ["Katrin", "Herstellung", "Alle laufenden Titel, Deadlines und Risiken auf einen Blick."],
-  ["Markus", "Satz", "Eine klare Arbeitsschlange mit aktuellem Stand und Korrektureingang."],
-  ["Sabine", "Redaktion", "Korrekturlaufe, Versionen und wartende Freigaben nachvollziehen."],
+  {
+    name: "Katrin",
+    role: "Herstellung",
+    text: "Alle laufenden Titel, Deadlines und Risiken auf einen Blick.",
+  },
+  {
+    name: "Markus",
+    role: "Satz",
+    text: "Eine klare Arbeitsschlange mit aktuellem Stand und Korrektureingang.",
+  },
+  {
+    name: "Sabine",
+    role: "Redaktion",
+    text: "Korrekturläufe, Versionen und wartende Freigaben nachvollziehen.",
+  },
 ];
 
 const processSteps = ["Manuskript", "Satz", "Korrektur", "Freigabe", "Preflight", "WCAG-PDF", "Druckfreigabe"];
@@ -31,8 +43,8 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
           <Wordmark />
           <h1>Struktur schaffen. Korrekturen steuern. Druckfreigabe sichern.</h1>
           <p>
-            Imprima ist ein Dashboard fuer professionelle Buchproduktion. Von Satz ueber Korrektur bis zur
-            Druckfreigabe macht es sichtbar, wo jedes Kapitel steht, wer worauf wartet und ob der Termin haelt.
+            Imprima ist ein Dashboard für professionelle Buchproduktion. Von Satz über Korrektur bis zur Druckfreigabe
+            macht es sichtbar, wo jedes Kapitel steht, wer worauf wartet und ob der Termin hält.
           </p>
           <Button onClick={onOpenPrototype}>Prototyp ansehen</Button>
         </div>
@@ -62,17 +74,21 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
       <section className="case-section case-two-col">
         <div>
           <p className="eyebrow">Ausgangslage</p>
-          <h2>Der Status eines 600-Seiten-Bandes liegt heute oft in fuenf Systemen.</h2>
+          <h2>Der Status eines 600-Seiten-Bandes liegt heute oft in fünf Systemen.</h2>
         </div>
         <p>
-          E-Mail-Threads, Excel-Listen, PDF-Markups, InDesign-Staende und muendliche Zurufe erzeugen Reibung.
+          E-Mail-Threads, Excel-Listen, PDF-Markups, InDesign-Stände und mündliche Zurufe erzeugen Reibung.
           Herstellung, Redaktion und Satz sehen nicht dieselbe Wahrheit. Risiken werden sichtbar, wenn der Drucktermin
           bereits wackelt.
         </p>
       </section>
 
       <section className="case-section persona-grid" aria-label="Personas">
-        {personas.map(([name, role, text]) => (
+        <div className="case-section-heading">
+          <p className="eyebrow">Personas</p>
+          <h2>Herstellung, Satz und Redaktion brauchen dieselbe Sicht.</h2>
+        </div>
+        {personas.map(({ name, role, text }) => (
           <article className="panel" key={name}>
             <p className="panel-label">{role}</p>
             <h3>{name}</h3>
@@ -84,15 +100,18 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
       <section className="case-section flow-band">
         <p className="eyebrow">Prozess</p>
         <h2>Vom Manuskript bis zur Druckfreigabe</h2>
-        <div className="flow-steps">
+        <ol className="flow-steps">
           {processSteps.map((step) => (
-            <span key={step}>{step}</span>
+            <li key={step}>{step}</li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="case-section decision-grid">
-        <p className="eyebrow">Designentscheidungen</p>
+        <div className="case-section-heading">
+          <p className="eyebrow">Designentscheidungen</p>
+          <h2>Produktentscheidungen für klare Freigaben.</h2>
+        </div>
         {decisions.map((decision, index) => (
           <article className="decision-card" key={decision}>
             <span>{String(index + 1).padStart(2, "0")}</span>
@@ -104,22 +123,36 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
       <section className="case-section system-board">
         <div>
           <p className="eyebrow">Design System</p>
-          <h2>Gruenes Geschwister zu TYMETRA, aber eigenstaendiges Produkt.</h2>
+          <h2>Grünes Geschwister zu TYMETRA, aber eigenständiges Produkt.</h2>
           <p>
-            Marken-Gruen fuehrt Interaktionen, Satz-Blau bleibt semantischer Status, Positiv-Gruen signalisiert
+            Marken-Grün führt Interaktionen, Satz-Blau bleibt semantischer Status, Positiv-Grün signalisiert
             Fertigstellung und Freigabe.
           </p>
         </div>
-        <img src="/brand/imprima-logo-identity.png" alt="Imprima Logo-Identitaet und visuelle Markenbausteine" />
-        <img src="/brand/imprima-ui-kit.png" alt="Imprima UI Kit mit Komponenten, Farben und Produktscreens" />
+        <img
+          src="/brand/imprima-logo-identity.png"
+          alt="Imprima Logo-Identität und visuelle Markenbausteine"
+          width={1672}
+          height={941}
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          src="/brand/imprima-ui-kit.png"
+          alt="Imprima UI Kit mit Komponenten, Farben und Produktscreens"
+          width={1672}
+          height={941}
+          loading="lazy"
+          decoding="async"
+        />
       </section>
 
       <section className="case-section reflection">
         <p className="eyebrow">Reflexion</p>
         <h2>Der Prototyp zeigt den Happy Path, nicht die komplette Verlagssystem-Landschaft.</h2>
         <p>
-          Eine spaetere Produktversion koennte InDesign-Exports, echte PDF-Pruefungen, Rollenrechte und
-          Verlagssystem-Integrationen anbinden. Fuer die Case Study reicht der klickbare Kern: Sichtbarkeit,
+          Eine spätere Produktversion könnte InDesign-Exports, echte PDF-Prüfungen, Rollenrechte und
+          Verlagssystem-Integrationen anbinden. Für die Case Study reicht der klickbare Kern: Sichtbarkeit,
           Korrekturlauf, Risiko und Freigabe.
         </p>
       </section>
