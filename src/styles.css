@@ -1229,6 +1229,39 @@ p {
   background: #ffffff;
 }
 
+.product-screens {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.screen-card {
+  min-height: 214px;
+  border: 1px solid #d9dce2;
+  border-radius: 8px;
+  padding: 18px;
+  background: #ffffff;
+}
+
+.screen-card span {
+  color: var(--brand-green);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.screen-card h3 {
+  margin: 26px 0 12px;
+  color: var(--navy);
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+.screen-card p {
+  margin: 0;
+  font-size: 14px;
+}
+
 .reflection {
   max-width: 900px;
   border-bottom: 0;
@@ -1267,7 +1300,8 @@ p {
   }
 
   .persona-grid,
-  .decision-grid {
+  .decision-grid,
+  .product-screens {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1309,7 +1343,8 @@ p {
 
   .case-meta dl,
   .persona-grid,
-  .decision-grid {
+  .decision-grid,
+  .product-screens {
     grid-template-columns: 1fr;
   }
 

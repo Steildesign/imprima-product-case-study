@@ -34,6 +34,29 @@ const personas = [
 
 const processSteps = ["Manuskript", "Satz", "Korrektur", "Freigabe", "Preflight", "WCAG-PDF", "Druckfreigabe"];
 
+const productScreens = [
+  {
+    title: "Projektübersicht",
+    text: "Alle Titel, Verlage, Deadlines, Statuswerte und Risiken werden als steuerbare Produktionsliste sichtbar.",
+  },
+  {
+    title: "Buch-Cockpit",
+    text: "Ein einzelner Titel bündelt Kapitelstand, Verantwortliche, Blocker und nächste Schritte für das Projektteam.",
+  },
+  {
+    title: "Korrektur-Flow",
+    text: "V1, V2, Autorenkorrektur, Schlusskorrektur und Freigabe werden als nachvollziehbarer Ablauf geführt.",
+  },
+  {
+    title: "Preflight",
+    text: "PDF/X, Schriften, Bildauflösung, WCAG-Hinweise und Druckfreigabe sind als prüfbarer Schritt angelegt.",
+  },
+  {
+    title: "Timeline",
+    text: "Produktionsfenster, Meilensteine und Risikoentwicklung zeigen früh, welche Titel Aufmerksamkeit brauchen.",
+  },
+];
+
 export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
   return (
     <article className="case-study">
@@ -66,6 +89,14 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
             <div>
               <dt>Typ</dt>
               <dd>Case Study auf realer Verlagserfahrung</dd>
+            </div>
+            <div>
+              <dt>Jahr</dt>
+              <dd>2026</dd>
+            </div>
+            <div>
+              <dt>Ökosystem</dt>
+              <dd>Desktop-Dashboard, optionaler Mobile-Check-in</dd>
             </div>
           </dl>
         </div>
@@ -145,6 +176,20 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
           loading="lazy"
           decoding="async"
         />
+      </section>
+
+      <section className="case-section product-screens">
+        <div className="case-section-heading">
+          <p className="eyebrow">Produkt-Screens</p>
+          <h2>Fünf Screens zeigen den Produktionsprozess end-to-end.</h2>
+        </div>
+        {productScreens.map((screen, index) => (
+          <article className="screen-card" key={screen.title}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h3>{screen.title}</h3>
+            <p>{screen.text}</p>
+          </article>
+        ))}
       </section>
 
       <section className="case-section reflection">
