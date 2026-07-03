@@ -116,7 +116,7 @@ export const projects: Project[] = [
         role: "Autor",
         date: "15.07.",
         chapter: "Kapitel 4, Seite 98",
-        text: "Bitte Bildunterschrift praezisieren.",
+        text: "Bitte Bildunterschrift präzisieren.",
       },
       {
         id: "c2",
@@ -128,13 +128,13 @@ export const projects: Project[] = [
       },
     ],
     preflight: [
-      { id: "pdfx", label: "PDF/X-Konformitaet", state: "passed", details: "Erfuellt" },
-      { id: "fonts", label: "Schriften eingebettet", state: "passed", details: "Erfuellt" },
+      { id: "pdfx", label: "PDF/X-Konformität", state: "passed", details: "Erfüllt" },
+      { id: "fonts", label: "Schriften eingebettet", state: "passed", details: "Erfüllt" },
       { id: "wcag", label: "Barrierefreiheit WCAG 2.1", state: "warning", details: "3 Hinweise" },
-      { id: "images", label: "Bildaufloesung", state: "passed", details: "Erfuellt" },
-      { id: "colors", label: "Farbraum & Transparenzen", state: "passed", details: "Erfuellt" },
-      { id: "links", label: "Links & Interaktivitaet", state: "passed", details: "Erfuellt" },
-      { id: "meta", label: "Dokumentinformationen", state: "passed", details: "Erfuellt" },
+      { id: "images", label: "Bildauflösung", state: "passed", details: "Erfüllt" },
+      { id: "colors", label: "Farbraum & Transparenzen", state: "passed", details: "Erfüllt" },
+      { id: "links", label: "Links & Interaktivität", state: "passed", details: "Erfüllt" },
+      { id: "meta", label: "Dokumentinformationen", state: "passed", details: "Erfüllt" },
     ],
     timeline: [
       { label: "Satz", status: "im-satz", startWeek: 20, endWeek: 23 },
@@ -156,7 +156,7 @@ export const projects: Project[] = [
     phase: "V2 blockiert",
     leadId: "s-reuter",
     team: ["s-reuter", "j-wegner", "l-bauer"],
-    blocker: "Autorenfeedback seit 4 Tagen ueberfaellig",
+    blocker: "Autorenfeedback seit 4 Tagen überfällig",
     chapters: [
       {
         id: "dm-1",
@@ -186,13 +186,13 @@ export const projects: Project[] = [
         owner: "Autor Review",
         date: "04.07.",
         state: "active",
-        note: "Rueckmeldung ueberfaellig",
+        note: "Rückmeldung überfällig",
       },
     ],
     comments: [],
     preflight: [
-      { id: "dm-pdfx", label: "PDF/X-Konformitaet", state: "warning", details: "Final-PDF ausstehend" },
-      { id: "dm-fonts", label: "Schriften eingebettet", state: "passed", details: "Erfuellt" },
+      { id: "dm-pdfx", label: "PDF/X-Konformität", state: "warning", details: "Final-PDF ausstehend" },
+      { id: "dm-fonts", label: "Schriften eingebettet", state: "passed", details: "Erfüllt" },
     ],
     timeline: [
       { label: "Satz", status: "im-satz", startWeek: 19, endWeek: 21 },
@@ -202,7 +202,7 @@ export const projects: Project[] = [
   {
     id: "nachhaltig-handeln",
     title: "Nachhaltig handeln",
-    publisher: "Gruen Verlag",
+    publisher: "Grün Verlag",
     isbn: "978-3-445566-88-6",
     pages: 196,
     deadline: "2026-08-02",
@@ -235,17 +235,17 @@ export const projects: Project[] = [
     ],
     correctionSteps: [
       { id: "nh-v1", label: "V1", owner: "Redaktion", date: "18.07.", state: "done", note: "Abgeschlossen" },
-      { id: "nh-freigabe", label: "Freigabe", owner: "Herstellung", date: "27.07.", state: "active", note: "Preflight prueft" },
+      { id: "nh-freigabe", label: "Freigabe", owner: "Herstellung", date: "27.07.", state: "active", note: "Preflight prüft" },
     ],
     comments: [],
     preflight: [
-      { id: "pdfx", label: "PDF/X-Konformitaet", state: "passed", details: "Erfuellt" },
-      { id: "fonts", label: "Schriften eingebettet", state: "passed", details: "Erfuellt" },
-      { id: "wcag", label: "Barrierefreiheit WCAG 2.1", state: "warning", details: "Alt-Texte pruefen" },
-      { id: "images", label: "Bildaufloesung", state: "passed", details: "Erfuellt" },
-      { id: "colors", label: "Farbraum & Transparenzen", state: "passed", details: "Erfuellt" },
-      { id: "links", label: "Links & Interaktivitaet", state: "passed", details: "Erfuellt" },
-      { id: "meta", label: "Dokumentinformationen", state: "passed", details: "Erfuellt" },
+      { id: "pdfx", label: "PDF/X-Konformität", state: "passed", details: "Erfüllt" },
+      { id: "fonts", label: "Schriften eingebettet", state: "passed", details: "Erfüllt" },
+      { id: "wcag", label: "Barrierefreiheit WCAG 2.1", state: "warning", details: "Alt-Texte prüfen" },
+      { id: "images", label: "Bildauflösung", state: "passed", details: "Erfüllt" },
+      { id: "colors", label: "Farbraum & Transparenzen", state: "passed", details: "Erfüllt" },
+      { id: "links", label: "Links & Interaktivität", state: "passed", details: "Erfüllt" },
+      { id: "meta", label: "Dokumentinformationen", state: "passed", details: "Erfüllt" },
     ],
     timeline: [{ label: "Preflight", status: "preflight", startWeek: 22, endWeek: 25 }],
   },
@@ -266,7 +266,7 @@ export const projects: Project[] = [
     chapters: [
       {
         id: "sh-1",
-        title: "Grundlagen des Erzaehlens",
+        title: "Grundlagen des Erzählens",
         pages: "1-96",
         ownerId: "j-wegner",
         status: "im-satz",
@@ -275,7 +275,7 @@ export const projects: Project[] = [
       },
       {
         id: "sh-2",
-        title: "Formate und Kanale",
+        title: "Formate und Kanäle",
         pages: "97-188",
         ownerId: "j-wegner",
         status: "offen",
@@ -289,8 +289,8 @@ export const projects: Project[] = [
     ],
     comments: [],
     preflight: [
-      { id: "sh-pdfx", label: "PDF/X-Konformitaet", state: "warning", details: "Noch nicht final" },
-      { id: "sh-images", label: "Bildaufloesung", state: "passed", details: "Vorabcheck bestanden" },
+      { id: "sh-pdfx", label: "PDF/X-Konformität", state: "warning", details: "Noch nicht final" },
+      { id: "sh-images", label: "Bildauflösung", state: "passed", details: "Vorabcheck bestanden" },
     ],
     timeline: [{ label: "Satz", status: "im-satz", startWeek: 21, endWeek: 23 }],
   },
@@ -311,7 +311,7 @@ export const projects: Project[] = [
     chapters: [
       {
         id: "dt-1",
-        title: "Methodenueberblick",
+        title: "Methodenüberblick",
         pages: "1-64",
         ownerId: "m-schneider",
         status: "offen",
@@ -329,12 +329,12 @@ export const projects: Project[] = [
       },
     ],
     correctionSteps: [
-      { id: "dt-manuskript", label: "Manuskript", owner: "Redaktion", date: "24.07.", state: "active", note: "Eingang pruefen" },
+      { id: "dt-manuskript", label: "Manuskript", owner: "Redaktion", date: "24.07.", state: "active", note: "Eingang prüfen" },
       { id: "dt-satz", label: "Satz", owner: "Herstellung", date: "05.08.", state: "planned", note: "Geplant" },
     ],
     comments: [],
     preflight: [
-      { id: "dt-fonts", label: "Schriften eingebettet", state: "passed", details: "Template geprueft" },
+      { id: "dt-fonts", label: "Schriften eingebettet", state: "passed", details: "Template geprüft" },
       { id: "dt-meta", label: "Dokumentinformationen", state: "warning", details: "Metadaten offen" },
     ],
     timeline: [{ label: "Manuskript", status: "offen", startWeek: 20, endWeek: 22 }],

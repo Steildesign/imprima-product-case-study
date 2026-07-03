@@ -17,7 +17,7 @@ interface BookCockpitProps {
 }
 
 const tabs: Array<{ id: BookTab; label: string }> = [
-  { id: "overview", label: "Uebersicht" },
+  { id: "overview", label: "Übersicht" },
   { id: "corrections", label: "Korrekturen" },
   { id: "preflight", label: "Preflight" },
   { id: "risk", label: "Risiko" },

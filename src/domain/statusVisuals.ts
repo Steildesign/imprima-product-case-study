@@ -28,7 +28,7 @@ export function getRiskVisual(risk: RiskLevel): RiskVisual {
   const map: Record<RiskLevel, RiskVisual> = {
     niedrig: { label: "Im Plan", className: "risk-dot risk-low" },
     mittel: { label: "Puffer knapp", className: "risk-dot risk-medium" },
-    hoch: { label: "Termin gefaehrdet", className: "risk-dot risk-high" },
+    hoch: { label: "Termin gefährdet", className: "risk-dot risk-high" },
   };
 
   return map[risk];

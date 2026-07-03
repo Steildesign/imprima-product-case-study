@@ -22,7 +22,7 @@ type CockpitView = "projects" | "corrections" | "approval" | "reports";
 type StubView = "tasks" | "files" | "calendar";
 
 const navItems: Array<{ id: ViewId; label: string; icon: Parameters<typeof Icon>[0]["name"] }> = [
-  { id: "overview", label: "Uebersicht", icon: "overview" },
+  { id: "overview", label: "Übersicht", icon: "overview" },
   { id: "projects", label: "Projekte", icon: "projects" },
   { id: "tasks", label: "Aufgaben", icon: "tasks" },
   { id: "corrections", label: "Korrekturen", icon: "corrections" },
@@ -50,7 +50,7 @@ const tabToCockpitView: Record<BookTab, CockpitView> = {
 const moduleStubs: Record<StubView, { title: string; description: string }> = {
   tasks: {
     title: "Aufgaben",
-    description: "Dieses Modul liegt ausserhalb des Prototype-Umfangs und ist daher nicht umgesetzt.",
+    description: "Dieses Modul liegt außerhalb des Prototyp-Umfangs und ist daher nicht umgesetzt.",
   },
   files: {
     title: "Dateien",
@@ -58,7 +58,7 @@ const moduleStubs: Record<StubView, { title: string; description: string }> = {
   },
   calendar: {
     title: "Kalender",
-    description: "Die Kalenderansicht ist ausserhalb des Prototype-Umfangs.",
+    description: "Die Kalenderansicht ist außerhalb des Prototyp-Umfangs.",
   },
 };
 
@@ -86,7 +86,7 @@ function ProjectEmptyState() {
   return (
     <section className="screen">
       <div className="empty-state compact">
-        <strong>Kein Projekt verfuegbar.</strong>
+        <strong>Kein Projekt verfügbar.</strong>
         <span>Es gibt aktuell kein Projekt, das im Cockpit angezeigt werden kann.</span>
       </div>
     </section>

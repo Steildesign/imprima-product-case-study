@@ -8,7 +8,7 @@ interface PreflightPanelProps {
 }
 
 const checkLabels: Record<PreflightState, string> = {
-  passed: "Erfuellt",
+  passed: "Erfüllt",
   warning: "Hinweis",
   failed: "Fehler",
 };
@@ -25,8 +25,8 @@ export function PreflightPanel({ project }: PreflightPanelProps) {
   if (project.preflight.length === 0) {
     return (
       <div className="empty-state preflight-empty">
-        <strong>Keine Preflight-Pruefungen vorhanden.</strong>
-        <span>Der finale PDF-Check wurde fuer diesen Titel noch nicht angelegt.</span>
+        <strong>Keine Preflight-Prüfungen vorhanden.</strong>
+        <span>Der finale PDF-Check wurde für diesen Titel noch nicht angelegt.</span>
       </div>
     );
   }
@@ -38,7 +38,7 @@ export function PreflightPanel({ project }: PreflightPanelProps) {
         <table className="check-table">
           <thead>
             <tr>
-              <th>Pruefpunkt</th>
+              <th>Prüfpunkt</th>
               <th>Status</th>
               <th>Details</th>
             </tr>
@@ -59,17 +59,17 @@ export function PreflightPanel({ project }: PreflightPanelProps) {
 
       <aside className="panel result-panel">
         <div className={`result-icon${hasWarnings ? " result-warning" : ""}`}>{hasWarnings ? "!" : "OK"}</div>
-        <h2>{hasWarnings ? "Pruefung mit Hinweisen" : "Pruefung erfolgreich"}</h2>
+        <h2>{hasWarnings ? "Prüfung mit Hinweisen" : "Prüfung erfolgreich"}</h2>
         <p>
-          {summary.passed} von {summary.total} Pruefpunkten erfuellt. {summary.warning} Hinweise und {summary.failed} Fehler offen.
+          {summary.passed} von {summary.total} Prüfpunkten erfüllt. {summary.warning} Hinweise und {summary.failed} Fehler offen.
         </p>
         <Button onClick={() => setApproved((current) => !current)}>
-          {approved ? "Druckfreigabe zuruecknehmen" : "Druckfreigabe erteilen"}
+          {approved ? "Druckfreigabe zurücknehmen" : "Druckfreigabe erteilen"}
         </Button>
         <Button variant="secondary" disabled title="Bericht-Download ist im Prototyp nicht aktiv">
           Bericht herunterladen
         </Button>
-        {approved && <p className="approval-note">Druckfreigabe im Prototyp erteilt. Erneut klicken zum Zuruecknehmen.</p>}
+        {approved && <p className="approval-note">Druckfreigabe im Prototyp erteilt. Erneut klicken zum Zurücknehmen.</p>}
       </aside>
     </div>
   );

@@ -60,13 +60,13 @@ export function TimelineRisk({ projects }: TimelineRiskProps) {
         ) : (
           <div className="empty-state compact">
             <strong>Keine Timeline-Daten.</strong>
-            <span>Es wurden noch keine Projekte ausgewaehlt.</span>
+            <span>Es wurden noch keine Projekte ausgewählt.</span>
           </div>
         )}
       </article>
 
       <aside className="panel risk-summary">
-        <p className="panel-label">Risikoueberblick</p>
+        <p className="panel-label">Risikoüberblick</p>
         <dl>
           <div>
             <dt>Hoch</dt>

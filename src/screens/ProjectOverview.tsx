@@ -21,9 +21,9 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
     <section className="screen">
       <header className="screen-header">
         <div>
-          <p className="eyebrow">Projektuebersicht</p>
+          <p className="eyebrow">Projektübersicht</p>
           <h1>Projekte</h1>
-          <p className="muted">Alle laufenden Titel, Deadlines und Engpaesse in einer Produktionssicht.</p>
+          <p className="muted">Alle laufenden Titel, Deadlines und Engpässe in einer Produktionssicht.</p>
         </div>
         <Button disabled title="Im Prototyp nicht umgesetzt">
           Neues Projekt
@@ -75,7 +75,7 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
                   <button
                     type="button"
                     className="table-link"
-                    aria-label={`${project.title} oeffnen`}
+                    aria-label={`${project.title} öffnen`}
                     onClick={() => onSelectProject(project.id)}
                   >
                     {project.title}

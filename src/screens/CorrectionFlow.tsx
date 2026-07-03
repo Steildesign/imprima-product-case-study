@@ -57,7 +57,7 @@ export function CorrectionFlow({ project }: CorrectionFlowProps) {
             <dd>{selectedStep.owner}</dd>
           </div>
           <div>
-            <dt>Faellig</dt>
+            <dt>Fällig</dt>
             <dd>{selectedStep.date}</dd>
           </div>
           <div>
@@ -99,7 +99,7 @@ export function CorrectionFlow({ project }: CorrectionFlowProps) {
         ) : (
           <div className="empty-state compact">
             <strong>Keine Kommentare.</strong>
-            <span>Fuer diesen Korrekturschritt liegen keine Rueckmeldungen vor.</span>
+            <span>Für diesen Korrekturschritt liegen keine Rückmeldungen vor.</span>
           </div>
         )}
       </article>
