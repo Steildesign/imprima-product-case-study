@@ -8,7 +8,7 @@ interface IconProps {
     | "files"
     | "calendar"
     | "reports"
-    | "case";
+    | "communication";
 }
 
 export function Icon({ name }: IconProps) {
