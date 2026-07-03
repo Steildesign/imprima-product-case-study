@@ -21,6 +21,7 @@ function createProject(overrides: Partial<Project> = {}): Project {
     progress: 0,
     status: "offen",
     risk: "niedrig",
+    compositionProfile: "linear",
     phase: "Fixture",
     leadId: "m-schneider",
     team: [],

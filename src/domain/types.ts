@@ -7,6 +7,7 @@ export type ProductionStatus =
   | "freigegeben";
 
 export type RiskLevel = "niedrig" | "mittel" | "hoch";
+export type CompositionProfileId = "linear" | "image-led" | "complex";
 export type CorrectionState = "done" | "active" | "planned";
 export type PreflightState = "passed" | "warning" | "failed";
 
@@ -73,6 +74,7 @@ export interface Project {
   progress: number;
   status: ProductionStatus;
   risk: RiskLevel;
+  compositionProfile: CompositionProfileId;
   phase: string;
   leadId: string;
   team: string[];

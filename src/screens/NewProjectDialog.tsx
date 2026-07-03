@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from "react";
 import { Button } from "../components/Button";
+import { compositionProfiles } from "../domain/compositionProfiles";
 import type { ProjectDraft } from "../domain/projectFactory";
+import type { CompositionProfileId } from "../domain/types";
 
 interface NewProjectDialogProps {
   onClose: () => void;
@@ -13,6 +15,7 @@ export function NewProjectDialog({ onClose, onCreate }: NewProjectDialogProps) {
   const [isbn, setIsbn] = useState("");
   const [pages, setPages] = useState("144");
   const [deadline, setDeadline] = useState("2026-09-18");
+  const [compositionProfile, setCompositionProfile] = useState<CompositionProfileId>("image-led");
   const canSubmit = title.trim().length > 0 && publisher.trim().length > 0 && Number.parseInt(pages, 10) > 0;
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -30,6 +33,7 @@ export function NewProjectDialog({ onClose, onCreate }: NewProjectDialogProps) {
       pages: Number.isNaN(pageCount) ? 1 : pageCount,
       deadline,
       leadId: "m-schneider",
+      compositionProfile,
     });
   };
 
@@ -84,6 +88,25 @@ export function NewProjectDialog({ onClose, onCreate }: NewProjectDialogProps) {
             <span>Projektleitung</span>
             <input value="M. Schneider" disabled />
           </label>
+
+          <fieldset className="profile-picker">
+            <legend>Satzprofil</legend>
+            <div className="profile-options">
+              {compositionProfiles.map((profile) => (
+                <button
+                  key={profile.id}
+                  type="button"
+                  className={`profile-option${compositionProfile === profile.id ? " is-active" : ""}`}
+                  aria-pressed={compositionProfile === profile.id}
+                  onClick={() => setCompositionProfile(profile.id)}
+                >
+                  <strong>{profile.label}</strong>
+                  <span>{profile.effortLabel}</span>
+                  <small>{profile.description}</small>
+                </button>
+              ))}
+            </div>
+          </fieldset>
 
           <footer>
             <Button variant="secondary" onClick={onClose}>

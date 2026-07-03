@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Button } from "../components/Button";
+import { ProfileBadge } from "../components/ProfileBadge";
 import { ProgressBar } from "../components/ProgressBar";
 import { RiskDots } from "../components/RiskDots";
 import { StatusBadge } from "../components/StatusBadge";
@@ -63,6 +64,7 @@ export function ProjectOverview({ projects, onSelectProject, onCreateProject }: 
               <th>Titel</th>
               <th>Verlag</th>
               <th>Seiten</th>
+              <th>Satzprofil</th>
               <th>Deadline</th>
               <th>Fortschritt</th>
               <th>Status</th>
@@ -84,6 +86,9 @@ export function ProjectOverview({ projects, onSelectProject, onCreateProject }: 
                 </td>
                 <td>{project.publisher}</td>
                 <td>{project.pages}</td>
+                <td>
+                  <ProfileBadge profileId={project.compositionProfile} />
+                </td>
                 <td>{project.deadlineLabel}</td>
                 <td>
                   <ProgressBar value={project.progress} label={`${project.title} Fortschritt`} />

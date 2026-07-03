@@ -10,6 +10,7 @@ describe("createProjectFromDraft", () => {
       pages: 144,
       deadline: "2026-09-18",
       leadId: "m-schneider",
+      compositionProfile: "complex",
     });
 
     expect(project).toMatchObject({
@@ -23,6 +24,7 @@ describe("createProjectFromDraft", () => {
       progress: 1,
       status: "offen",
       risk: "niedrig",
+      compositionProfile: "complex",
       phase: "Manuskript",
       leadId: "m-schneider",
       team: ["m-schneider"],
@@ -42,6 +44,7 @@ describe("createProjectFromDraft", () => {
       pages: 96,
       deadline: "2026-10-02",
       leadId: "m-schneider",
+      compositionProfile: "linear",
     });
 
     expect(project.id).toBe("neues-buch");

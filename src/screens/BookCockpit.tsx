@@ -1,7 +1,9 @@
 import { ProgressBar } from "../components/ProgressBar";
+import { ProfileBadge } from "../components/ProfileBadge";
 import { RiskDots } from "../components/RiskDots";
 import { StatusBadge } from "../components/StatusBadge";
 import { Tabs } from "../components/Tabs";
+import { getCompositionProfile } from "../domain/compositionProfiles";
 import { people } from "../domain/mockData";
 import { getRiskVisual } from "../domain/statusVisuals";
 import type { Project } from "../domain/types";
@@ -32,6 +34,7 @@ export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProp
   const lead = people.find((person) => person.id === project.leadId);
   const team = people.filter((person) => project.team.includes(person.id));
   const risk = getRiskVisual(project.risk);
+  const profile = getCompositionProfile(project.compositionProfile);
 
   return (
     <section className="screen">
@@ -61,6 +64,16 @@ export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProp
                 <dd>{project.phase}</dd>
               </div>
               <div>
+                <dt>Satzprofil</dt>
+                <dd>
+                  <ProfileBadge profileId={project.compositionProfile} />
+                </dd>
+              </div>
+              <div>
+                <dt>Aufwand</dt>
+                <dd>{profile.effortLabel}</dd>
+              </div>
+              <div>
                 <dt>Deadline</dt>
                 <dd>{project.deadlineLabel}</dd>
               </div>
@@ -74,6 +87,7 @@ export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProp
                 </dd>
               </div>
             </dl>
+            <p className="profile-note">{profile.riskHint}</p>
           </article>
 
           <article className="panel chapter-panel">

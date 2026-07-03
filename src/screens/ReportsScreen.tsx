@@ -1,3 +1,5 @@
+import { ProfileBadge } from "../components/ProfileBadge";
+import { getCompositionProfileCounts } from "../domain/compositionProfiles";
 import { reportHighlights } from "../domain/moduleData";
 import type { Project } from "../domain/types";
 import { TimelineRisk } from "./TimelineRisk";
@@ -7,6 +9,8 @@ interface ReportsScreenProps {
 }
 
 export function ReportsScreen({ projects }: ReportsScreenProps) {
+  const profileCounts = getCompositionProfileCounts(projects);
+
   return (
     <section className="screen">
       <header className="screen-header">
@@ -26,6 +30,22 @@ export function ReportsScreen({ projects }: ReportsScreenProps) {
           </article>
         ))}
       </div>
+
+      <article className="panel profile-report">
+        <div>
+          <p className="panel-label">Aufwandsmix</p>
+          <h2>Satzprofile der laufenden Titel</h2>
+        </div>
+        <div className="profile-report-grid">
+          {profileCounts.map(({ profile, count }) => (
+            <div className="profile-report-item" key={profile.id}>
+              <ProfileBadge profileId={profile.id} />
+              <strong>{count}</strong>
+              <span>{profile.effortLabel}</span>
+            </div>
+          ))}
+        </div>
+      </article>
 
       <TimelineRisk projects={projects} />
     </section>

@@ -1,4 +1,4 @@
-import type { Project } from "./types";
+import type { CompositionProfileId, Project } from "./types";
 
 export interface ProjectDraft {
   title: string;
@@ -7,6 +7,7 @@ export interface ProjectDraft {
   pages: number;
   deadline: string;
   leadId: string;
+  compositionProfile: CompositionProfileId;
 }
 
 function slugify(value: string) {
@@ -43,6 +44,7 @@ export function createProjectFromDraft(draft: ProjectDraft): Project {
     progress: 1,
     status: "offen",
     risk: "niedrig",
+    compositionProfile: draft.compositionProfile,
     phase: "Manuskript",
     leadId: draft.leadId,
     team: [draft.leadId],
