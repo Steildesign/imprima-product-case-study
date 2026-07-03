@@ -1,30 +1,51 @@
 # Imprima
 
-Imprima is a German UX/Product Design case-study prototype for professional book production.
+Imprima ist ein klickbarer UX/Product-Case-Study-Prototyp fuer professionelle Buchproduktion. Die App zeigt, wie Herstellung, Redaktion und externe Beteiligte Produktionsstand, Satzaufwand, Korrekturen, Freigaben und Statusberichte in einer schlanken Oberflaeche nachvollziehen koennen.
 
-It contains:
+## Features
 
-- a clickable product dashboard prototype
-- realistic local mock data
-- a German portfolio case-study page
-- an Imprima design system based on the supplied brand and UI kit boards
+- Projektuebersicht mit Fortschritt, Risiko, Status und Satzprofil
+- Buch-Cockpit fuer Kapitel, Korrekturen, Preflight und Timeline-Risiko
+- Satzprofile: Linearer Satz, Bildintegrierter Satz, Komplexes Seitenlayout
+- Projektanlage mit realistischen Mock-Daten
+- Teilbare Produktionsstatus-Seite fuer Redaktion und Autor:innen
+- Portfolio-Case-Study-Seite ausserhalb der App-Shell
+- Statischer React/Vite-Prototyp ohne Backend
 
-## Run locally
+## Routen
+
+- `/` Produkt-Prototyp
+- `/case-study` Portfolio-Case-Study
+- `/status/storytelling-heute` Beispiel fuer eine externe Produktionsstatus-Seite
+
+## Lokal Starten
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the product prototype at `/` and the standalone portfolio case-study page at `/case-study`.
+Vite startet standardmaessig lokal unter `http://127.0.0.1:5173/`.
 
-## Verify
+## Qualitaet Pruefen
 
 ```bash
-npm run test
+npm test
 npm run build
 ```
 
+## Deployment
+
+Empfohlen: Vercel oder Netlify, weil direkte SPA-Routen wie `/case-study` und `/status/storytelling-heute` dort einfach per Fallback auf `index.html` funktionieren.
+
+GitHub Pages ist ebenfalls moeglich, braucht aber eine SPA-Fallback-Konfiguration oder Hash-Routing, damit direkte Unterseiten nach Reload nicht als 404 enden.
+
+Weitere Hinweise stehen in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+## Open-Source-Hinweis
+
+Der Quellcode ist unter MIT lizenziert. Markenassets, Logo, UI-Kit-Bilder und Case-Study-Inhalte sind davon ausgenommen und nicht automatisch zur freien Wiederverwendung lizenziert. Details stehen in [ASSET_LICENSE.md](ASSET_LICENSE.md).
+
 ## Scope
 
-This is a static portfolio prototype. It has no backend, no database, no login, and no real PDF or WCAG analysis.
+Imprima ist ein statischer Portfolio-Prototyp. Es gibt kein Backend, keine Authentifizierung, keine Datenbank, keinen echten PDF-Export und keine echte WCAG-/Preflight-Analyse. Alle Daten sind lokale Mock-Daten.
