@@ -1,3 +1,4 @@
+import { Button } from "../components/Button";
 import { ProgressBar } from "../components/ProgressBar";
 import { ProfileBadge } from "../components/ProfileBadge";
 import { RiskDots } from "../components/RiskDots";
@@ -17,6 +18,7 @@ interface BookCockpitProps {
   project: Project;
   activeTab: BookTab;
   onTabChange: (tab: BookTab) => void;
+  onShareStatus: (projectId: string) => void;
 }
 
 const tabs: Array<{ id: BookTab; label: string }> = [
@@ -30,7 +32,7 @@ function getPersonName(personId: string) {
   return people.find((person) => person.id === personId)?.name ?? "Nicht zugewiesen";
 }
 
-export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProps) {
+export function BookCockpit({ project, activeTab, onTabChange, onShareStatus }: BookCockpitProps) {
   const lead = people.find((person) => person.id === project.leadId);
   const team = people.filter((person) => project.team.includes(person.id));
   const risk = getRiskVisual(project.risk);
@@ -47,7 +49,12 @@ export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProp
             {lead?.name ?? "Nicht zugewiesen"}
           </p>
         </div>
-        <StatusBadge status={project.status} />
+        <div className="cockpit-actions">
+          <Button variant="secondary" onClick={() => onShareStatus(project.id)}>
+            Status teilen
+          </Button>
+          <StatusBadge status={project.status} />
+        </div>
       </header>
 
       <Tabs items={tabs} activeId={activeTab} onChange={onTabChange} />

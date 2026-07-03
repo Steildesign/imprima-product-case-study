@@ -14,13 +14,16 @@ import { FilesScreen } from "./screens/FilesScreen";
 import { NewProjectDialog } from "./screens/NewProjectDialog";
 import { ProjectOverview } from "./screens/ProjectOverview";
 import { ReportsScreen } from "./screens/ReportsScreen";
+import { SharedStatusPage } from "./screens/SharedStatusPage";
 import { TasksScreen } from "./screens/TasksScreen";
+import { getSharedStatusPath } from "./domain/sharedStatus";
 
 type CockpitView = "projects" | "corrections" | "approval";
 type ModuleView = "tasks" | "files" | "calendar" | "reports" | "communication";
-type RouteMode = "app" | "case-study";
+type RouteMode = "app" | "case-study" | "shared-status";
 
 const CASE_STUDY_PATH = "/case-study";
+const SHARED_STATUS_PREFIX = "/status/";
 
 const cockpitViewToTab: Record<CockpitView, BookTab> = {
   projects: "overview",
@@ -70,7 +73,23 @@ function ModuleScreen({ view, projectList }: { view: ModuleView; projectList: Pr
 }
 
 function getRouteMode(): RouteMode {
-  return window.location.pathname === CASE_STUDY_PATH ? "case-study" : "app";
+  if (window.location.pathname === CASE_STUDY_PATH) {
+    return "case-study";
+  }
+
+  if (window.location.pathname.startsWith(SHARED_STATUS_PREFIX)) {
+    return "shared-status";
+  }
+
+  return "app";
+}
+
+function getSharedStatusProjectId(): string | undefined {
+  if (!window.location.pathname.startsWith(SHARED_STATUS_PREFIX)) {
+    return undefined;
+  }
+
+  return decodeURIComponent(window.location.pathname.slice(SHARED_STATUS_PREFIX.length)) || undefined;
 }
 
 export default function App() {
@@ -84,6 +103,10 @@ export default function App() {
     () => projectList.find((project) => project.id === selectedProjectId) ?? projectList.at(0),
     [projectList, selectedProjectId],
   );
+  const sharedStatusProject = useMemo(() => {
+    const projectId = getSharedStatusProjectId();
+    return projectList.find((project) => project.id === projectId);
+  }, [projectList, routeMode]);
 
   useEffect(() => {
     const syncRoute = () => setRouteMode(getRouteMode());
@@ -110,6 +133,19 @@ export default function App() {
     setActiveBookTab("overview");
   };
 
+  const openPrototypeFromSharedStatus = (projectId: string) => {
+    window.history.pushState({}, "", "/");
+    setRouteMode("app");
+    setSelectedProjectId(projectId);
+    setView("projects");
+    setActiveBookTab("overview");
+  };
+
+  const openSharedStatus = (projectId: string) => {
+    window.history.pushState({}, "", getSharedStatusPath(projectId));
+    setRouteMode("shared-status");
+  };
+
   const createProject = (draft: ProjectDraft) => {
     const nextProject = createProjectFromDraft(draft);
     const existingIds = new Set(projectList.map((project) => project.id));
@@ -132,6 +168,19 @@ export default function App() {
     return (
       <main className="case-page">
         <CaseStudy onOpenPrototype={openPrototypeFromCaseStudy} />
+      </main>
+    );
+  }
+
+  if (routeMode === "shared-status") {
+    return sharedStatusProject ? (
+      <SharedStatusPage
+        project={sharedStatusProject}
+        onOpenPrototype={() => openPrototypeFromSharedStatus(sharedStatusProject.id)}
+      />
+    ) : (
+      <main className="share-page">
+        <ProjectEmptyState />
       </main>
     );
   }
@@ -173,7 +222,12 @@ export default function App() {
           <ModuleScreen view={view} projectList={projectList} />
         ) : isCockpitView(view) ? (
           selectedProject ? (
-            <BookCockpit project={selectedProject} activeTab={activeBookTab} onTabChange={handleBookTabChange} />
+            <BookCockpit
+              project={selectedProject}
+              activeTab={activeBookTab}
+              onTabChange={handleBookTabChange}
+              onShareStatus={openSharedStatus}
+            />
           ) : (
             <ProjectEmptyState />
           )
