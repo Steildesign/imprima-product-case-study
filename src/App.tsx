@@ -127,6 +127,7 @@ export default function App() {
               key={item.id}
               type="button"
               className={`nav-item${view === item.id ? " is-active" : ""}`}
+              aria-label={item.label}
               aria-current={view === item.id ? "page" : undefined}
               onClick={() => handleViewChange(item.id)}
             >
