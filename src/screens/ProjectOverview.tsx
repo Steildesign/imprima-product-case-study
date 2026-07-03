@@ -9,11 +9,12 @@ import type { Project, ProjectFilters, RiskLevel } from "../domain/types";
 interface ProjectOverviewProps {
   projects: Project[];
   onSelectProject: (projectId: string) => void;
+  onCreateProject: () => void;
 }
 
 const riskOptions: Array<RiskLevel | "alle"> = ["alle", "hoch", "mittel", "niedrig"];
 
-export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewProps) {
+export function ProjectOverview({ projects, onSelectProject, onCreateProject }: ProjectOverviewProps) {
   const [filters, setFilters] = useState<ProjectFilters>({ query: "", risk: "alle", status: "alle" });
   const visibleProjects = useMemo(() => getVisibleProjects(projects, filters), [filters, projects]);
 
@@ -25,7 +26,7 @@ export function ProjectOverview({ projects, onSelectProject }: ProjectOverviewPr
           <h1>Projekte</h1>
           <p className="muted">Alle laufenden Titel, Deadlines und Engpässe in einer Produktionssicht.</p>
         </div>
-        <Button disabled title="Im Prototyp nicht umgesetzt">
+        <Button onClick={onCreateProject}>
           Neues Projekt
         </Button>
       </header>

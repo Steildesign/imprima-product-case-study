@@ -16,6 +16,8 @@ npm install
 npm run dev
 ```
 
+Open the product prototype at `/` and the standalone portfolio case-study page at `/case-study`.
+
 ## Verify
 
 ```bash

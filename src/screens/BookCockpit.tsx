@@ -3,6 +3,7 @@ import { RiskDots } from "../components/RiskDots";
 import { StatusBadge } from "../components/StatusBadge";
 import { Tabs } from "../components/Tabs";
 import { people } from "../domain/mockData";
+import { getRiskVisual } from "../domain/statusVisuals";
 import type { Project } from "../domain/types";
 import { CorrectionFlow } from "./CorrectionFlow";
 import { PreflightPanel } from "./PreflightPanel";
@@ -30,6 +31,7 @@ function getPersonName(personId: string) {
 export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProps) {
   const lead = people.find((person) => person.id === project.leadId);
   const team = people.filter((person) => project.team.includes(person.id));
+  const risk = getRiskVisual(project.risk);
 
   return (
     <section className="screen">
@@ -65,7 +67,10 @@ export function BookCockpit({ project, activeTab, onTabChange }: BookCockpitProp
               <div>
                 <dt>Risiko</dt>
                 <dd>
-                  <RiskDots risk={project.risk} />
+                  <span className="risk-summary">
+                    <RiskDots risk={project.risk} />
+                    <span>{risk.label}</span>
+                  </span>
                 </dd>
               </div>
             </dl>

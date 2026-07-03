@@ -1,85 +1,46 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
+import { appNavItems, type ViewId } from "./domain/navigation";
 import { projects } from "./domain/mockData";
+import { createProjectFromDraft, type ProjectDraft } from "./domain/projectFactory";
+import type { Project } from "./domain/types";
 import { BookCockpit } from "./screens/BookCockpit";
 import type { BookTab } from "./screens/BookCockpit";
+import { CalendarScreen } from "./screens/CalendarScreen";
 import { CaseStudy } from "./screens/CaseStudy";
+import { CommunicationScreen } from "./screens/CommunicationScreen";
+import { FilesScreen } from "./screens/FilesScreen";
+import { NewProjectDialog } from "./screens/NewProjectDialog";
 import { ProjectOverview } from "./screens/ProjectOverview";
+import { ReportsScreen } from "./screens/ReportsScreen";
+import { TasksScreen } from "./screens/TasksScreen";
 
-type ViewId =
-  | "overview"
-  | "projects"
-  | "tasks"
-  | "corrections"
-  | "approval"
-  | "files"
-  | "calendar"
-  | "reports"
-  | "case";
+type CockpitView = "projects" | "corrections" | "approval";
+type ModuleView = "tasks" | "files" | "calendar" | "reports" | "communication";
+type RouteMode = "app" | "case-study";
 
-type CockpitView = "projects" | "corrections" | "approval" | "reports";
-type StubView = "tasks" | "files" | "calendar";
-
-const navItems: Array<{ id: ViewId; label: string; icon: Parameters<typeof Icon>[0]["name"] }> = [
-  { id: "overview", label: "Übersicht", icon: "overview" },
-  { id: "projects", label: "Projekte", icon: "projects" },
-  { id: "tasks", label: "Aufgaben", icon: "tasks" },
-  { id: "corrections", label: "Korrekturen", icon: "corrections" },
-  { id: "approval", label: "Freigaben", icon: "approval" },
-  { id: "files", label: "Dateien", icon: "files" },
-  { id: "calendar", label: "Kalender", icon: "calendar" },
-  { id: "reports", label: "Berichte", icon: "reports" },
-  { id: "case", label: "Case Study", icon: "case" },
-];
+const CASE_STUDY_PATH = "/case-study";
 
 const cockpitViewToTab: Record<CockpitView, BookTab> = {
   projects: "overview",
   corrections: "corrections",
   approval: "preflight",
-  reports: "risk",
 };
 
 const tabToCockpitView: Record<BookTab, CockpitView> = {
   overview: "projects",
   corrections: "corrections",
   preflight: "approval",
-  risk: "reports",
-};
-
-const moduleStubs: Record<StubView, { title: string; description: string }> = {
-  tasks: {
-    title: "Aufgaben",
-    description: "Dieses Modul liegt außerhalb des Prototyp-Umfangs und ist daher nicht umgesetzt.",
-  },
-  files: {
-    title: "Dateien",
-    description: "Die Dateiverwaltung ist in diesem Prototyp bewusst nicht abgebildet.",
-  },
-  calendar: {
-    title: "Kalender",
-    description: "Die Kalenderansicht ist außerhalb des Prototyp-Umfangs.",
-  },
+  risk: "projects",
 };
 
 function isCockpitView(view: ViewId): view is CockpitView {
-  return view === "projects" || view === "corrections" || view === "approval" || view === "reports";
+  return view === "projects" || view === "corrections" || view === "approval";
 }
 
-function isStubView(view: ViewId): view is StubView {
-  return view === "tasks" || view === "files" || view === "calendar";
-}
-
-function ModuleStub({ title, description }: { title: string; description: string }) {
-  return (
-    <section className="screen">
-      <article className="panel module-stub">
-        <p className="eyebrow">Modul</p>
-        <h1>{title}</h1>
-        <p className="muted">{description}</p>
-      </article>
-    </section>
-  );
+function isModuleView(view: ViewId): view is ModuleView {
+  return view === "tasks" || view === "files" || view === "calendar" || view === "reports" || view === "communication";
 }
 
 function ProjectEmptyState() {
@@ -93,14 +54,42 @@ function ProjectEmptyState() {
   );
 }
 
+function ModuleScreen({ view, projectList }: { view: ModuleView; projectList: Project[] }) {
+  switch (view) {
+    case "tasks":
+      return <TasksScreen />;
+    case "files":
+      return <FilesScreen />;
+    case "calendar":
+      return <CalendarScreen />;
+    case "reports":
+      return <ReportsScreen projects={projectList} />;
+    case "communication":
+      return <CommunicationScreen />;
+  }
+}
+
+function getRouteMode(): RouteMode {
+  return window.location.pathname === CASE_STUDY_PATH ? "case-study" : "app";
+}
+
 export default function App() {
+  const [routeMode, setRouteMode] = useState<RouteMode>(() => getRouteMode());
+  const [projectList, setProjectList] = useState<Project[]>(projects);
   const [view, setView] = useState<ViewId>("overview");
   const [selectedProjectId, setSelectedProjectId] = useState("kunst-des-satzes");
   const [activeBookTab, setActiveBookTab] = useState<BookTab>("overview");
+  const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
   const selectedProject = useMemo(
-    () => projects.find((project) => project.id === selectedProjectId) ?? projects.at(0),
-    [selectedProjectId],
+    () => projectList.find((project) => project.id === selectedProjectId) ?? projectList.at(0),
+    [projectList, selectedProjectId],
   );
+
+  useEffect(() => {
+    const syncRoute = () => setRouteMode(getRouteMode());
+    window.addEventListener("popstate", syncRoute);
+    return () => window.removeEventListener("popstate", syncRoute);
+  }, []);
 
   const handleViewChange = (nextView: ViewId) => {
     setView(nextView);
@@ -114,6 +103,39 @@ export default function App() {
     setView(tabToCockpitView[nextTab]);
   };
 
+  const openPrototypeFromCaseStudy = () => {
+    window.history.pushState({}, "", "/");
+    setRouteMode("app");
+    setView("overview");
+    setActiveBookTab("overview");
+  };
+
+  const createProject = (draft: ProjectDraft) => {
+    const nextProject = createProjectFromDraft(draft);
+    const existingIds = new Set(projectList.map((project) => project.id));
+    let uniqueProject = nextProject;
+    let suffix = 2;
+
+    while (existingIds.has(uniqueProject.id)) {
+      uniqueProject = { ...nextProject, id: `${nextProject.id}-${suffix}` };
+      suffix += 1;
+    }
+
+    setProjectList((current) => [uniqueProject, ...current]);
+    setSelectedProjectId(uniqueProject.id);
+    setActiveBookTab("overview");
+    setView("projects");
+    setIsNewProjectOpen(false);
+  };
+
+  if (routeMode === "case-study") {
+    return (
+      <main className="case-page">
+        <CaseStudy onOpenPrototype={openPrototypeFromCaseStudy} />
+      </main>
+    );
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -122,7 +144,7 @@ export default function App() {
         </div>
 
         <nav className="sidebar-nav" aria-label="Hauptnavigation">
-          {navItems.map((item) => (
+          {appNavItems.map((item) => (
             <button
               key={item.id}
               type="button"
@@ -147,10 +169,8 @@ export default function App() {
       </aside>
 
       <main className="workspace">
-        {view === "case" ? (
-          <CaseStudy onOpenPrototype={() => handleViewChange("overview")} />
-        ) : isStubView(view) ? (
-          <ModuleStub title={moduleStubs[view].title} description={moduleStubs[view].description} />
+        {isModuleView(view) ? (
+          <ModuleScreen view={view} projectList={projectList} />
         ) : isCockpitView(view) ? (
           selectedProject ? (
             <BookCockpit project={selectedProject} activeTab={activeBookTab} onTabChange={handleBookTabChange} />
@@ -159,7 +179,8 @@ export default function App() {
           )
         ) : (
           <ProjectOverview
-            projects={projects}
+            projects={projectList}
+            onCreateProject={() => setIsNewProjectOpen(true)}
             onSelectProject={(projectId) => {
               setSelectedProjectId(projectId);
               setActiveBookTab("overview");
@@ -168,6 +189,8 @@ export default function App() {
           />
         )}
       </main>
+
+      {isNewProjectOpen && <NewProjectDialog onClose={() => setIsNewProjectOpen(false)} onCreate={createProject} />}
     </div>
   );
 }
