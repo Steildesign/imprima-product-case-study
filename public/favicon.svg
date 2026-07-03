@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Imprima">
+  <rect width="64" height="64" rx="12" fill="#0D172A" />
+  <path d="M14 10h36l-7 13H21L14 10Z" fill="#4FCF97" />
+  <path d="M23 20h18v28H23V20Z" fill="#079D38" />
+  <path d="M16 54l8-12h16l8 12H16Z" fill="#4FCF97" />
+  <path d="M14 10l13 13h-6L14 10Z" fill="#079D38" />
+  <path d="M50 10 37 23h6l7-13Z" fill="#079D38" />
+  <path d="M23 20h9v28h-9V20Z" fill="#0BAE44" />
+  <path d="M16 54l16-12h-8l-8 12Z" fill="#079D38" />
+  <path d="M48 54 32 42h8l8 12Z" fill="#079D38" />
+</svg>
