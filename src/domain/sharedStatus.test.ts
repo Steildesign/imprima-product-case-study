@@ -13,20 +13,20 @@ describe("shared status", () => {
 
     expect(estimateDeliveryFeasibility(complexProject, { requestedPages: 360, availableWorkdays: 3 })).toMatchObject({
       level: "not-realistic",
-      capacityPages: 72,
+      capacityPages: 99,
       requestedPages: 360,
       availableWorkdays: 3,
     });
   });
 
-  it("marks a smaller image-led request as critical but negotiable", () => {
+  it("marks a smaller mixed image-led request as critical but negotiable", () => {
     if (!imageProject) {
       throw new Error("Missing image-led project fixture");
     }
 
-    expect(estimateDeliveryFeasibility(imageProject, { requestedPages: 135, availableWorkdays: 3 })).toMatchObject({
+    expect(estimateDeliveryFeasibility(imageProject, { requestedPages: 95, availableWorkdays: 3 })).toMatchObject({
       level: "critical",
-      capacityPages: 126,
+      capacityPages: 102,
     });
   });
 
@@ -38,11 +38,69 @@ describe("shared status", () => {
     expect(buildSharedStatus(complexProject)).toMatchObject({
       projectId: "storytelling-heute",
       sharePath: "/status/storytelling-heute",
+      isbn: "978-3-987654-12-3",
+      titleNumber: "VM-2026-0712",
       profileLabel: "Komplexes Seitenlayout",
       progress: 25,
       remainingPages: 207,
+      report: {
+        tone: "critical",
+        headline: "Der aktuelle Umfang ist deutlich größer als geplant.",
+      },
       feasibility: { level: "not-realistic" },
     });
+  });
+
+  it("provides tailored report tone and delivery request for each visible project", () => {
+    expect(
+      projects.map((project) => {
+        const status = buildSharedStatus(project);
+
+        return {
+          projectId: status.projectId,
+          tone: status.report.tone,
+          requestedPages: status.feasibility.requestedPages,
+          availableWorkdays: status.feasibility.availableWorkdays,
+          feasibility: status.feasibility.level,
+        };
+      }),
+    ).toEqual([
+      {
+        projectId: "kunst-des-satzes",
+        tone: "warning",
+        requestedPages: 95,
+        availableWorkdays: 3,
+        feasibility: "critical",
+      },
+      {
+        projectId: "digital-mindset",
+        tone: "critical",
+        requestedPages: 180,
+        availableWorkdays: 3,
+        feasibility: "critical",
+      },
+      {
+        projectId: "nachhaltig-handeln",
+        tone: "positive",
+        requestedPages: 42,
+        availableWorkdays: 3,
+        feasibility: "realistic",
+      },
+      {
+        projectId: "storytelling-heute",
+        tone: "critical",
+        requestedPages: 360,
+        availableWorkdays: 3,
+        feasibility: "not-realistic",
+      },
+      {
+        projectId: "design-thinking",
+        tone: "positive",
+        requestedPages: 120,
+        availableWorkdays: 5,
+        feasibility: "realistic",
+      },
+    ]);
   });
 
   it("creates a stable share path", () => {

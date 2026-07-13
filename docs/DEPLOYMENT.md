@@ -1,31 +1,38 @@
 # Deployment
 
-Imprima is a static React/Vite prototype. The production build is generated into `dist/`.
+Imprima ist eine statische React/Vite-Anwendung. Der Produktions-Build wird in `dist/` erzeugt.
 
 ## Build
 
 ```bash
 npm ci
-npm run build
+npm run check
 ```
 
-## Recommended Hosting
+## Vercel
 
-Use Vercel or Netlify for the first public demo. Both support single-page app fallbacks, which are needed for direct links such as:
+1. GitHub-Repository in Vercel importieren.
+2. Framework-Preset `Vite` verwenden.
+3. Build Command `npm run build` und Output Directory `dist` beibehalten.
 
-- `/case-study`
-- `/status/storytelling-heute`
+`vercel.json` enthaelt den SPA-Fallback fuer direkte Case-Study- und Status-URLs.
 
-Configure the host so every unknown route falls back to `index.html`.
+## Netlify
+
+1. GitHub-Repository in Netlify importieren.
+2. Build Command `npm run build` und Publish Directory `dist` verwenden.
+
+`public/_redirects` wird beim Build nach `dist/_redirects` kopiert und aktiviert den SPA-Fallback.
 
 ## GitHub Pages
 
-GitHub Pages can host the app, but direct SPA routes need extra handling. Without a fallback, opening `/case-study` or `/status/storytelling-heute` directly after a reload may return a 404.
+GitHub Pages ist moeglich, braucht wegen der pfadbasierten Routen jedoch eine zusaetzliche 404-Fallback-Loesung oder Hash-Routing. Fuer die erste Portfolio-Demo sind Vercel oder Netlify deshalb robuster.
 
-Before using GitHub Pages, choose one of these approaches:
+## Verifikation
 
-- Add a GitHub Pages 404 fallback that redirects to the app.
-- Switch to hash routes for public demo links.
-- Serve only the root route and navigate inside the app.
+Nach dem Deployment diese URLs direkt aufrufen und neu laden:
 
-For this project, Vercel or Netlify is the cleaner first deployment target.
+- `/`
+- `/case-study`
+- `/status/storytelling-heute`
+- `/?view=reports&project=kunst-des-satzes`

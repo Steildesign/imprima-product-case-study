@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Wordmark } from "../components/Brand";
 import { Button } from "../components/Button";
+import { PageUtilityNav } from "../components/PageUtilityNav";
 import { ProfileBadge } from "../components/ProfileBadge";
+import { ProfileWorkloadBars, WorkloadStateBadge } from "../components/ProfileWorkloadBars";
 import { ProgressBar } from "../components/ProgressBar";
 import { RiskDots } from "../components/RiskDots";
 import { StatusBadge } from "../components/StatusBadge";
@@ -37,7 +39,18 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
   };
 
   return (
-    <main className="share-page">
+    <>
+      <a className="skip-link" href="#main-content">Zum Inhalt springen</a>
+      <main className="share-page" id="main-content">
+      <div className="page-return-bar">
+        <Button variant="secondary" className="button-nav button-nav-back" onClick={onOpenPrototype}>
+          <span className="button-symbol" aria-hidden="true">
+            ←
+          </span>
+          <span>Zurück zum Projekt</span>
+        </Button>
+      </div>
+
       <section className="share-hero">
         <div>
           <Wordmark />
@@ -60,6 +73,14 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
               <dd>{status.publisher}</dd>
             </div>
             <div>
+              <dt>ISBN</dt>
+              <dd>{status.isbn}</dd>
+            </div>
+            <div>
+              <dt>Titelnummer</dt>
+              <dd>{status.titleNumber}</dd>
+            </div>
+            <div>
               <dt>Deadline</dt>
               <dd>{status.deadlineLabel}</dd>
             </div>
@@ -79,8 +100,8 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
           <small>von {status.pages} Seiten offen</small>
         </article>
         <article>
-          <span>Satzprofil</span>
-          <ProfileBadge profileId={project.compositionProfile} />
+          <span>Satzmix</span>
+          <ProfileBadge profileId={status.workload.dominantProfile.profile.id} />
           <small>{status.profileEffort}</small>
         </article>
         <article className={`feasibility-${status.feasibility.level}`}>
@@ -90,6 +111,19 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
             {status.feasibility.requestedPages} Seiten / {status.feasibility.availableWorkdays} Arbeitstage
           </small>
         </article>
+      </section>
+
+      <section className={`share-status-message share-status-${status.report.tone}`}>
+        <div>
+          <p className="panel-label">Statusmitteilung</p>
+          <h2>{status.report.headline}</h2>
+          <p>{status.report.summary}</p>
+        </div>
+        <ul>
+          {status.report.nextSteps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ul>
       </section>
 
       <section className="share-grid">
@@ -116,6 +150,28 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
               </dd>
             </div>
           </dl>
+        </article>
+
+        <article className="share-section share-workload">
+          <div>
+            <p className="panel-label">Satzmix</p>
+            <h2>Plan/Ist nach Seitenkategorie</h2>
+          </div>
+          <ProfileWorkloadBars rows={status.workload.rows} showLegend />
+          <div className="share-workload-list">
+            {status.workload.rows.map((row) => (
+              <div key={row.profile.id}>
+                <span>
+                  <ProfileBadge profileId={row.profile.id} />
+                  <strong>{row.actualPages} Ist</strong>
+                </span>
+                <small>
+                  {row.plannedPages} Plan · {row.remainingPages} offen · {row.issueCount} Problem(e)
+                </small>
+                <WorkloadStateBadge state={row.state} label={row.stateLabel} />
+              </div>
+            ))}
+          </div>
         </article>
 
         <article className="share-section">
@@ -151,19 +207,25 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
           <p className="panel-label">Freigabe</p>
           <label>
             <span>Ansichtslink</span>
-            <input value={shareUrl} readOnly />
+            <input name="shared-status-url" value={shareUrl} readOnly />
           </label>
           <div>
             <Button onClick={copyShareLink}>{copyState}</Button>
             <Button variant="secondary" onClick={() => window.print()}>
               PDF exportieren
             </Button>
-            <Button variant="tertiary" onClick={onOpenPrototype}>
-              Prototyp öffnen
+            <Button variant="tertiary" className="button-nav button-nav-back" onClick={onOpenPrototype}>
+              <span className="button-symbol" aria-hidden="true">
+                ←
+              </span>
+              <span>Zurück zum Projekt</span>
             </Button>
           </div>
         </article>
       </section>
-    </main>
+
+      <PageUtilityNav backLabel="Zurück zum Projekt" onBack={onOpenPrototype} />
+      </main>
+    </>
   );
 }

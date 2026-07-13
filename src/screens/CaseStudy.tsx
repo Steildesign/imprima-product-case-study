@@ -1,5 +1,6 @@
 import { Wordmark } from "../components/Brand";
 import { Button } from "../components/Button";
+import { PageUtilityNav } from "../components/PageUtilityNav";
 
 interface CaseStudyProps {
   onOpenPrototype: () => void;
@@ -60,6 +61,15 @@ const productScreens = [
 export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
   return (
     <article className="case-study">
+      <div className="page-return-bar">
+        <Button variant="secondary" className="button-nav button-nav-back" onClick={onOpenPrototype}>
+          <span className="button-symbol" aria-hidden="true">
+            ←
+          </span>
+          <span>Zurück zur App</span>
+        </Button>
+      </div>
+
       <section className="case-hero">
         <div>
           <p className="eyebrow">UX/UI | Product Design | 2026</p>
@@ -201,6 +211,8 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
           Korrekturlauf, Risiko und Freigabe.
         </p>
       </section>
+
+      <PageUtilityNav backLabel="Zurück zur App" onBack={onOpenPrototype} />
     </article>
   );
 }

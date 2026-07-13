@@ -8,6 +8,7 @@ export type ProductionStatus =
 
 export type RiskLevel = "niedrig" | "mittel" | "hoch";
 export type CompositionProfileId = "linear" | "image-led" | "complex";
+export type ProfileWorkloadState = "im-plan" | "beobachten" | "ueber-plan";
 export type CorrectionState = "done" | "active" | "planned";
 export type PreflightState = "passed" | "warning" | "failed";
 
@@ -62,11 +63,28 @@ export interface TimelinePhase {
   endWeek: number;
 }
 
+export interface ProfileWorkload {
+  profileId: CompositionProfileId;
+  plannedPages: number;
+  actualPages: number;
+  completedPages: number;
+  issueCount: number;
+}
+
+export interface ProjectPriceProfile {
+  label: string;
+  pageRates: Record<CompositionProfileId, number>;
+  imageEditingRate: number;
+  correctionRoundRate: number;
+  aiCreditRate: number;
+}
+
 export interface Project {
   id: string;
   title: string;
   publisher: string;
   isbn: string;
+  titleNumber: string;
   pages: number;
   deadline: string;
   // Display copy used by the static mock data; keep deadline as the canonical date.
@@ -75,6 +93,7 @@ export interface Project {
   status: ProductionStatus;
   risk: RiskLevel;
   compositionProfile: CompositionProfileId;
+  profileWorkload: ProfileWorkload[];
   phase: string;
   leadId: string;
   team: string[];
@@ -83,6 +102,8 @@ export interface Project {
   comments: Comment[];
   preflight: PreflightCheck[];
   timeline: TimelinePhase[];
+  priceProfile?: ProjectPriceProfile;
+  preApprovalStatus?: ProductionStatus;
   blocker?: string;
 }
 

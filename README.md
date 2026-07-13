@@ -1,51 +1,57 @@
 # Imprima
 
-Imprima ist ein klickbarer UX/Product-Case-Study-Prototyp fuer professionelle Buchproduktion. Die App zeigt, wie Herstellung, Redaktion und externe Beteiligte Produktionsstand, Satzaufwand, Korrekturen, Freigaben und Statusberichte in einer schlanken Oberflaeche nachvollziehen koennen.
+Imprima ist ein klickbarer UX/Product-Case-Study-Prototyp fuer professionelle Buchproduktion. Das Dashboard verbindet Projektsteuerung, Satzaufwand, Korrekturen, Freigaben, Produktionsplanung, Budgetsignale und externe Statuskommunikation in einer konsistenten Arbeitsoberflaeche.
 
-## Features
+## Produktumfang
 
-- Projektuebersicht mit Fortschritt, Risiko, Status und Satzprofil
-- Buch-Cockpit fuer Kapitel, Korrekturen, Preflight und Timeline-Risiko
-- Satzprofile: Linearer Satz, Bildintegrierter Satz, Komplexes Seitenlayout
-- Projektanlage mit realistischen Mock-Daten
-- Teilbare Produktionsstatus-Seite fuer Redaktion und Autor:innen
-- Portfolio-Case-Study-Seite ausserhalb der App-Shell
-- Statischer React/Vite-Prototyp ohne Backend
+- Projektuebersicht mit Fortschritt, Risiko, Status, ISBN, Titelnummer und Budgetsignal
+- Buch-Cockpit mit editierbarer Kapitelstruktur und synchronisierten Projektwerten
+- Satzprofile: Linearer Satz, Bildintegrierter Satz und Komplexes Seitenlayout
+- Plan/Ist-Vergleich des Satzmixes inklusive Auftragsabweichung
+- Projektanlage mit Verlagsschaetzung, Seitenpreisen und lokalen Mock-Daten
+- Aufgabensteuerung mit Detailansicht, Statuswechsel und Undo-Rueckmeldung
+- Korrektur- und Freigabe-Flow mit Preflight- und Risikosicht
+- Taggenaue Produktions-Timeline fuer lange Laufzeiten, Kapazitaet und Urlaub
+- Projektberichte, priorisierte Kommunikation und Imprima Assist
+- Teilbare Statusseite fuer Redaktion und Autor:innen
+- Separate Portfolio-Case-Study ausserhalb der App-Shell
+
+## Technischer Scope
+
+Der Prototyp basiert auf React, TypeScript und Vite. Veraenderte Projekte, Kapitel und Aufgaben werden im Browser per `localStorage` gespeichert. Es gibt bewusst kein Backend, keine Authentifizierung, keine Datenbank, keinen echten PDF-Export und keine produktive KI- oder Preflight-Schnittstelle.
 
 ## Routen
 
 - `/` Produkt-Prototyp
+- `/?view=projects&project=kunst-des-satzes` direktes Projektcockpit
 - `/case-study` Portfolio-Case-Study
-- `/status/storytelling-heute` Beispiel fuer eine externe Produktionsstatus-Seite
+- `/status/storytelling-heute` externe Beispiel-Statusseite
 
-## Lokal Starten
+## Lokal starten
+
+Voraussetzung: Node.js 20.19 oder neuer.
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Vite startet standardmaessig lokal unter `http://127.0.0.1:5173/`.
+Vite startet standardmaessig unter `http://127.0.0.1:5173/`. Falls der Port belegt ist, waehlt Vite automatisch den naechsten freien Port.
 
-## Qualitaet Pruefen
+## Qualitaet pruefen
 
 ```bash
-npm test
-npm run build
+npm run check
 ```
+
+Der Befehl fuehrt die Vitest-Suite aus und erstellt anschliessend den produktiven TypeScript/Vite-Build.
 
 ## Deployment
 
-Empfohlen: Vercel oder Netlify, weil direkte SPA-Routen wie `/case-study` und `/status/storytelling-heute` dort einfach per Fallback auf `index.html` funktionieren.
-
-GitHub Pages ist ebenfalls moeglich, braucht aber eine SPA-Fallback-Konfiguration oder Hash-Routing, damit direkte Unterseiten nach Reload nicht als 404 enden.
+Vercel und Netlify sind fuer die Portfolio-Demo vorbereitet. `vercel.json` und `public/_redirects` leiten direkte SPA-Routen wie `/case-study` und `/status/...` auf `index.html` zurueck.
 
 Weitere Hinweise stehen in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-## Open-Source-Hinweis
+## Lizenz
 
-Der Quellcode ist unter MIT lizenziert. Markenassets, Logo, UI-Kit-Bilder und Case-Study-Inhalte sind davon ausgenommen und nicht automatisch zur freien Wiederverwendung lizenziert. Details stehen in [ASSET_LICENSE.md](ASSET_LICENSE.md).
-
-## Scope
-
-Imprima ist ein statischer Portfolio-Prototyp. Es gibt kein Backend, keine Authentifizierung, keine Datenbank, keinen echten PDF-Export und keine echte WCAG-/Preflight-Analyse. Alle Daten sind lokale Mock-Daten.
+Der Quellcode steht unter der MIT-Lizenz. Imprima-Logo, Markenassets, UI-Kit-Bilder und Case-Study-Inhalte sind davon ausgenommen. Details stehen in [ASSET_LICENSE.md](ASSET_LICENSE.md).

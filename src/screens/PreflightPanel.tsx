@@ -1,10 +1,13 @@
-import { useState } from "react";
 import { Button } from "../components/Button";
+import { InsightBars, InsightDonut } from "../components/InsightCharts";
+import { getPreflightChartData } from "../domain/chartVisuals";
 import { summarizePreflight } from "../domain/selectors";
 import type { PreflightState, Project } from "../domain/types";
 
 interface PreflightPanelProps {
   project: Project;
+  approved: boolean;
+  onApprovalChange: (approved: boolean) => void;
 }
 
 const checkLabels: Record<PreflightState, string> = {
@@ -17,9 +20,9 @@ function getCheckLabel(state: PreflightState) {
   return checkLabels[state];
 }
 
-export function PreflightPanel({ project }: PreflightPanelProps) {
-  const [approved, setApproved] = useState(false);
+export function PreflightPanel({ project, approved, onApprovalChange }: PreflightPanelProps) {
   const summary = summarizePreflight(project.preflight);
+  const preflightChart = getPreflightChartData(project.preflight);
   const hasWarnings = summary.warning > 0 || summary.failed > 0;
 
   if (project.preflight.length === 0) {
@@ -33,6 +36,14 @@ export function PreflightPanel({ project }: PreflightPanelProps) {
 
   return (
     <div className="preflight-grid">
+      <section className="panel insight-panel preflight-insight-panel">
+        <InsightDonut
+          data={preflightChart}
+          caption="Übersetzt die technische PDF-Prüfung in eine klare Freigabeampel."
+        />
+        <InsightBars title="Prüfstatus" segments={preflightChart.segments} />
+      </section>
+
       <article className="panel preflight-list">
         <p className="panel-label">Preflight</p>
         <table className="check-table">
@@ -63,7 +74,7 @@ export function PreflightPanel({ project }: PreflightPanelProps) {
         <p>
           {summary.passed} von {summary.total} Prüfpunkten erfüllt. {summary.warning} Hinweise und {summary.failed} Fehler offen.
         </p>
-        <Button onClick={() => setApproved((current) => !current)}>
+        <Button onClick={() => onApprovalChange(!approved)}>
           {approved ? "Druckfreigabe zurücknehmen" : "Druckfreigabe erteilen"}
         </Button>
         <Button variant="secondary" disabled title="Bericht-Download ist im Prototyp nicht aktiv">

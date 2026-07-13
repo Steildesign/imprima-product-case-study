@@ -18,7 +18,7 @@ describe("composition profiles", () => {
       label: "Bildintegrierter Satz",
       shortLabel: "Bildintegriert",
       effortLabel: "mittlerer Aufwand",
-      riskHint: "Bildplatzierung, Marginalien und Annotationen brauchen Abstimmung.",
+      riskHint: "Bildplatzierung, Marginalien, Annotationen und Probenabstimmung vor Freigabe klären.",
     });
   });
 

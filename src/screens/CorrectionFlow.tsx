@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { GateFlow, InsightBars, InsightDonut } from "../components/InsightCharts";
 import { ProgressBar } from "../components/ProgressBar";
+import { getCorrectionChartData } from "../domain/chartVisuals";
 import { getActiveCorrectionStep } from "../domain/selectors";
 import type { Project } from "../domain/types";
 
@@ -9,6 +11,7 @@ interface CorrectionFlowProps {
 
 export function CorrectionFlow({ project }: CorrectionFlowProps) {
   const activeStep = getActiveCorrectionStep(project);
+  const correctionChart = getCorrectionChartData(project.correctionSteps);
   const defaultStepId = activeStep?.id ?? project.correctionSteps[0]?.id;
   const [selectedStepId, setSelectedStepId] = useState<string | undefined>(defaultStepId);
   const selectedStep = useMemo(
@@ -46,6 +49,21 @@ export function CorrectionFlow({ project }: CorrectionFlowProps) {
           </button>
         ))}
       </div>
+
+      <section className="panel insight-panel correction-insight-panel">
+        <InsightDonut
+          data={correctionChart}
+          caption="Zeigt, wie weit der Korrektur- und Freigabeweg belastbar geschlossen ist."
+        />
+        <InsightBars title="Schrittstatus" segments={correctionChart.segments} />
+        <GateFlow
+          steps={project.correctionSteps.map((step) => ({
+            id: step.id,
+            label: step.label,
+            state: step.state,
+          }))}
+        />
+      </section>
 
       <article className="panel">
         <p className="panel-label">Aktueller Schritt</p>

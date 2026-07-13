@@ -8,6 +8,7 @@ docs/superpowers/
 .env
 .env.*
 coverage/
+artifacts/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

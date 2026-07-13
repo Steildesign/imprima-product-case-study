@@ -23,12 +23,57 @@ export function getVisibleProjects(projects: Project[], filters: ProjectFilters)
       query.length === 0 ||
       project.title.toLowerCase().includes(query) ||
       project.publisher.toLowerCase().includes(query) ||
-      project.isbn.toLowerCase().includes(query);
+      project.isbn.toLowerCase().includes(query) ||
+      project.titleNumber.toLowerCase().includes(query);
     const matchesRisk = filters.risk === "alle" || project.risk === filters.risk;
     const matchesStatus = filters.status === "alle" || project.status === filters.status;
 
     return matchesQuery && matchesRisk && matchesStatus;
   });
+}
+
+export interface ProjectNavigationItem {
+  project: Project;
+  position: number;
+  isActive: boolean;
+}
+
+export interface ProjectNavigation {
+  currentIndex: number;
+  total: number;
+  previous: Project | undefined;
+  next: Project | undefined;
+  items: ProjectNavigationItem[];
+}
+
+export function getProjectNavigation(projects: Project[], selectedProjectId: string): ProjectNavigation {
+  const total = projects.length;
+
+  if (total === 0) {
+    return {
+      currentIndex: -1,
+      total,
+      previous: undefined,
+      next: undefined,
+      items: [],
+    };
+  }
+
+  const selectedIndex = projects.findIndex((project) => project.id === selectedProjectId);
+  const currentIndex = selectedIndex >= 0 ? selectedIndex : 0;
+  const activeProjectId = projects[currentIndex].id;
+
+  return {
+    currentIndex,
+    total,
+    previous: total > 1 ? projects[(currentIndex - 1 + total) % total] : undefined,
+    next: total > 1 ? projects[(currentIndex + 1) % total] : undefined,
+    items: projects.map((project, index) => ({
+      project,
+      position: index + 1,
+      isActive: project.id === activeProjectId,
+    })),
+  };
 }
 
 export function getProjectRiskCounts(projects: Project[]): Record<RiskLevel, number> {

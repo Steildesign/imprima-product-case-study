@@ -1,12 +1,27 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Wordmark } from "./components/Brand";
 import { Icon } from "./components/Icon";
-import { appNavItems, type ViewId } from "./domain/navigation";
+import { ImprimaAssist } from "./components/ImprimaAssist";
+import { PageUtilityNav } from "./components/PageUtilityNav";
+import { ActionNotice, type ActionNoticeModel } from "./components/ActionNotice";
+import { ProjectContextBar } from "./components/ProjectContextBar";
+import {
+  appNavItems,
+  canCreateProjectFromView,
+  createAppNavigationSearch,
+  getBookTabForView,
+  parseAppNavigation,
+  type AppNavigationState,
+  type BookTab,
+  type ViewId,
+} from "./domain/navigation";
+import { loadStoredProjects, loadStoredTasks, saveStoredProjects, saveStoredTasks } from "./domain/appStorage";
 import { projects } from "./domain/mockData";
+import { taskItems, type TaskItem } from "./domain/moduleData";
+import { createChapterFromDraft, type ChapterDraft } from "./domain/chapterFactory";
 import { createProjectFromDraft, type ProjectDraft } from "./domain/projectFactory";
-import type { Project } from "./domain/types";
+import type { Chapter, ProductionStatus, Project } from "./domain/types";
 import { BookCockpit } from "./screens/BookCockpit";
-import type { BookTab } from "./screens/BookCockpit";
 import { CalendarScreen } from "./screens/CalendarScreen";
 import { CaseStudy } from "./screens/CaseStudy";
 import { CommunicationScreen } from "./screens/CommunicationScreen";
@@ -24,12 +39,7 @@ type RouteMode = "app" | "case-study" | "shared-status";
 
 const CASE_STUDY_PATH = "/case-study";
 const SHARED_STATUS_PREFIX = "/status/";
-
-const cockpitViewToTab: Record<CockpitView, BookTab> = {
-  projects: "overview",
-  corrections: "corrections",
-  approval: "preflight",
-};
+const DEFAULT_PROJECT_ID = "kunst-des-satzes";
 
 const tabToCockpitView: Record<BookTab, CockpitView> = {
   overview: "projects",
@@ -57,18 +67,42 @@ function ProjectEmptyState() {
   );
 }
 
-function ModuleScreen({ view, projectList }: { view: ModuleView; projectList: Project[] }) {
+function ModuleScreen({
+  view,
+  projectList,
+  tasks,
+  onCreateProject,
+  onOpenProject,
+  onUpdateTask,
+  onFeedback,
+}: {
+  view: ModuleView;
+  projectList: Project[];
+  tasks: TaskItem[];
+  onCreateProject: () => void;
+  onOpenProject: (projectId: string) => void;
+  onUpdateTask: (taskId: string, patch: Partial<TaskItem>) => void;
+  onFeedback: (message: string, onUndo?: () => void) => void;
+}) {
   switch (view) {
     case "tasks":
-      return <TasksScreen />;
+      return <TasksScreen projects={projectList} tasks={tasks} onCreateProject={onCreateProject} onOpenProject={onOpenProject} onUpdateTask={onUpdateTask} />;
     case "files":
-      return <FilesScreen />;
+      return (
+        <FilesScreen projects={projectList} onCreateProject={onCreateProject} onOpenProject={onOpenProject} />
+      );
     case "calendar":
-      return <CalendarScreen />;
+      return (
+        <CalendarScreen projects={projectList} onCreateProject={onCreateProject} onOpenProject={onOpenProject} onFeedback={onFeedback} />
+      );
     case "reports":
-      return <ReportsScreen projects={projectList} />;
+      return (
+        <ReportsScreen projects={projectList} onCreateProject={onCreateProject} onOpenProject={onOpenProject} />
+      );
     case "communication":
-      return <CommunicationScreen />;
+      return (
+        <CommunicationScreen projects={projectList} onCreateProject={onCreateProject} onOpenProject={onOpenProject} />
+      );
   }
 }
 
@@ -94,56 +128,145 @@ function getSharedStatusProjectId(): string | undefined {
 
 export default function App() {
   const [routeMode, setRouteMode] = useState<RouteMode>(() => getRouteMode());
-  const [projectList, setProjectList] = useState<Project[]>(projects);
-  const [view, setView] = useState<ViewId>("overview");
-  const [selectedProjectId, setSelectedProjectId] = useState("kunst-des-satzes");
-  const [activeBookTab, setActiveBookTab] = useState<BookTab>("overview");
+  const [projectList, setProjectList] = useState<Project[]>(() => loadStoredProjects(window.localStorage, projects));
+  const [tasks, setTasks] = useState<TaskItem[]>(() => loadStoredTasks(window.localStorage, taskItems));
+  const [initialNavigation] = useState(() =>
+    parseAppNavigation(window.location.search, projectList.at(0)?.id ?? DEFAULT_PROJECT_ID),
+  );
+  const [view, setView] = useState<ViewId>(initialNavigation.view);
+  const [selectedProjectId, setSelectedProjectId] = useState(initialNavigation.projectId);
+  const [activeBookTab, setActiveBookTab] = useState<BookTab>(initialNavigation.tab);
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false);
+  const newProjectTriggerRef = useRef<HTMLElement | null>(null);
+  const [notice, setNotice] = useState<ActionNoticeModel | undefined>();
   const selectedProject = useMemo(
     () => projectList.find((project) => project.id === selectedProjectId) ?? projectList.at(0),
     [projectList, selectedProjectId],
   );
+  const showCreateProjectAction = canCreateProjectFromView(view);
   const sharedStatusProject = useMemo(() => {
     const projectId = getSharedStatusProjectId();
     return projectList.find((project) => project.id === projectId);
   }, [projectList, routeMode]);
 
   useEffect(() => {
-    const syncRoute = () => setRouteMode(getRouteMode());
+    const syncRoute = () => {
+      const nextRouteMode = getRouteMode();
+      setRouteMode(nextRouteMode);
+
+      if (nextRouteMode === "app") {
+        const navigation = parseAppNavigation(window.location.search, DEFAULT_PROJECT_ID);
+        setView(navigation.view);
+        setSelectedProjectId(navigation.projectId);
+        setActiveBookTab(navigation.tab);
+      }
+    };
     window.addEventListener("popstate", syncRoute);
     return () => window.removeEventListener("popstate", syncRoute);
   }, []);
 
-  const handleViewChange = (nextView: ViewId) => {
-    setView(nextView);
-    if (isCockpitView(nextView)) {
-      setActiveBookTab(cockpitViewToTab[nextView]);
+  useEffect(() => {
+    saveStoredProjects(window.localStorage, projectList);
+  }, [projectList]);
+
+  useEffect(() => {
+    saveStoredTasks(window.localStorage, tasks);
+  }, [tasks]);
+
+  useEffect(() => {
+    if (!notice) {
+      return;
     }
+
+    const timeoutId = window.setTimeout(() => setNotice(undefined), 5200);
+    return () => window.clearTimeout(timeoutId);
+  }, [notice]);
+
+  const showFeedback = (message: string, onUndo?: () => void) => {
+    setNotice({ id: Date.now(), message, onUndo });
+  };
+
+  const updateProjects = (updater: (current: Project[]) => Project[], message: string) => {
+    const previous = projectList;
+    const next = updater(previous);
+    setProjectList(next);
+    showFeedback(message, () => {
+      setProjectList(previous);
+      setNotice({ id: Date.now(), message: "Änderung rückgängig gemacht." });
+    });
+  };
+
+  useEffect(() => {
+    if (routeMode !== "app" || !selectedProject || selectedProject.id === selectedProjectId) {
+      return;
+    }
+
+    setSelectedProjectId(selectedProject.id);
+    window.history.replaceState(
+      {},
+      "",
+      `/${createAppNavigationSearch({ view, projectId: selectedProject.id, tab: activeBookTab })}`,
+    );
+  }, [activeBookTab, routeMode, selectedProject, selectedProjectId, view]);
+
+  const navigateInApp = (navigation: AppNavigationState, mode: "push" | "replace" = "push") => {
+    setRouteMode("app");
+    setView(navigation.view);
+    setSelectedProjectId(navigation.projectId);
+    setActiveBookTab(navigation.tab);
+    window.history[`${mode}State`]({}, "", `/${createAppNavigationSearch(navigation)}`);
+  };
+
+  const handleViewChange = (nextView: ViewId) => {
+    navigateInApp({
+      view: nextView,
+      projectId: selectedProject?.id ?? DEFAULT_PROJECT_ID,
+      tab: nextView === "projects" ? "overview" : getBookTabForView(nextView, activeBookTab),
+    });
+    resetPageScroll();
   };
 
   const handleBookTabChange = (nextTab: BookTab) => {
-    setActiveBookTab(nextTab);
-    setView(tabToCockpitView[nextTab]);
+    navigateInApp({
+      view: tabToCockpitView[nextTab],
+      projectId: selectedProject?.id ?? DEFAULT_PROJECT_ID,
+      tab: nextTab,
+    });
+  };
+
+  const resetPageScroll = () => {
+    window.scrollTo({ top: 0 });
   };
 
   const openPrototypeFromCaseStudy = () => {
-    window.history.pushState({}, "", "/");
-    setRouteMode("app");
-    setView("overview");
-    setActiveBookTab("overview");
+    navigateInApp({ view: "overview", projectId: selectedProject?.id ?? DEFAULT_PROJECT_ID, tab: "overview" });
+    resetPageScroll();
   };
 
   const openPrototypeFromSharedStatus = (projectId: string) => {
-    window.history.pushState({}, "", "/");
-    setRouteMode("app");
-    setSelectedProjectId(projectId);
-    setView("projects");
-    setActiveBookTab("overview");
+    navigateInApp({ view: "projects", projectId, tab: "overview" });
+    resetPageScroll();
   };
 
   const openSharedStatus = (projectId: string) => {
     window.history.pushState({}, "", getSharedStatusPath(projectId));
     setRouteMode("shared-status");
+    resetPageScroll();
+  };
+
+  const returnToWorkspaceOverview = () => {
+    navigateInApp({ view: "overview", projectId: selectedProject?.id ?? DEFAULT_PROJECT_ID, tab: "overview" });
+    resetPageScroll();
+  };
+
+  const openNewProjectDialog = () => {
+    newProjectTriggerRef.current = document.activeElement as HTMLElement | null;
+    setIsNewProjectOpen(true);
+  };
+
+  const closeNewProjectDialog = () => {
+    setIsNewProjectOpen(false);
+    window.requestAnimationFrame(() => newProjectTriggerRef.current?.focus());
   };
 
   const createProject = (draft: ProjectDraft) => {
@@ -157,18 +280,86 @@ export default function App() {
       suffix += 1;
     }
 
-    setProjectList((current) => [uniqueProject, ...current]);
-    setSelectedProjectId(uniqueProject.id);
-    setActiveBookTab("overview");
-    setView("projects");
+    updateProjects((current) => [uniqueProject, ...current], `Projekt „${uniqueProject.title}“ wurde angelegt.`);
+    navigateInApp({ view: "projects", projectId: uniqueProject.id, tab: "overview" });
     setIsNewProjectOpen(false);
+  };
+
+  const addChapterToProject = (projectId: string, draft: ChapterDraft) => {
+    updateProjects(
+      (current) =>
+      current.map((project) => {
+        if (project.id !== projectId) {
+          return project;
+        }
+
+        const nextChapter = createChapterFromDraft(draft, {
+          projectPages: project.pages,
+          existingChapterIds: project.chapters.map((chapter) => chapter.id),
+        });
+
+        return {
+          ...project,
+          chapters: [...project.chapters, nextChapter],
+        };
+      }),
+      "Kapitel wurde angelegt und in der Projektstruktur gespeichert.",
+    );
+  };
+
+  const updateChapter = (projectId: string, chapterId: string, patch: Partial<Chapter>) => {
+    updateProjects(
+      (current) => current.map((project) => project.id === projectId
+        ? { ...project, chapters: project.chapters.map((chapter) => chapter.id === chapterId ? { ...chapter, ...patch } : chapter) }
+        : project),
+      "Kapiteländerung wurde gespeichert.",
+    );
+  };
+
+  const updateProjectStatus = (projectId: string, status: ProductionStatus) => {
+    updateProjects(
+      (current) => current.map((project) => project.id === projectId ? { ...project, status } : project),
+      "Projektstatus wurde aktualisiert. Berichte und Übersichten sind synchron.",
+    );
+  };
+
+  const updateTask = (taskId: string, patch: Partial<TaskItem>) => {
+    const previous = tasks;
+    setTasks((current) => current.map((task) => task.id === taskId ? { ...task, ...patch } : task));
+    showFeedback("Aufgabenstatus wurde gespeichert.", () => {
+      setTasks(previous);
+      setNotice({ id: Date.now(), message: "Aufgabenänderung rückgängig gemacht." });
+    });
+  };
+
+  const setProjectApproval = (projectId: string, approved: boolean) => {
+    updateProjects(
+      (current) => current.map((project) => {
+        if (project.id !== projectId) {
+          return project;
+        }
+
+        return approved
+          ? { ...project, preApprovalStatus: project.status, status: "freigegeben" }
+          : { ...project, status: project.preApprovalStatus ?? "preflight", preApprovalStatus: undefined };
+      }),
+      approved ? "Druckfreigabe wurde erteilt." : "Druckfreigabe wurde zurückgenommen.",
+    );
+  };
+
+  const openProject = (projectId: string) => {
+    navigateInApp({ view: "projects", projectId, tab: "overview" });
+    resetPageScroll();
   };
 
   if (routeMode === "case-study") {
     return (
-      <main className="case-page">
-        <CaseStudy onOpenPrototype={openPrototypeFromCaseStudy} />
-      </main>
+      <>
+        <a className="skip-link" href="#main-content">Zum Inhalt springen</a>
+        <main className="case-page" id="main-content">
+          <CaseStudy onOpenPrototype={openPrototypeFromCaseStudy} />
+        </main>
+      </>
     );
   }
 
@@ -179,32 +370,48 @@ export default function App() {
         onOpenPrototype={() => openPrototypeFromSharedStatus(sharedStatusProject.id)}
       />
     ) : (
-      <main className="share-page">
-        <ProjectEmptyState />
-      </main>
+      <>
+        <a className="skip-link" href="#main-content">Zum Inhalt springen</a>
+        <main className="share-page" id="main-content">
+          <ProjectEmptyState />
+        </main>
+      </>
     );
   }
 
   return (
-    <div className="app-shell">
-      <aside className="sidebar">
+    <>
+      <a className="skip-link" href="#main-content">Zum Inhalt springen</a>
+      <div className="app-shell">
+        <aside className="sidebar">
         <div className="sidebar-brand">
           <Wordmark />
         </div>
 
         <nav className="sidebar-nav" aria-label="Hauptnavigation">
           {appNavItems.map((item) => (
-            <button
+            <a
               key={item.id}
-              type="button"
+              href={`/${createAppNavigationSearch({
+                view: item.id,
+                projectId: selectedProject?.id ?? DEFAULT_PROJECT_ID,
+                tab: item.id === "projects" ? "overview" : getBookTabForView(item.id, activeBookTab),
+              })}`}
               className={`nav-item${view === item.id ? " is-active" : ""}`}
               aria-label={item.label}
               aria-current={view === item.id ? "page" : undefined}
-              onClick={() => handleViewChange(item.id)}
+              onClick={(event) => {
+                if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                  return;
+                }
+
+                event.preventDefault();
+                handleViewChange(item.id);
+              }}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
-            </button>
+            </a>
           ))}
         </nav>
 
@@ -215,18 +422,45 @@ export default function App() {
             <small>Projektleiter</small>
           </span>
         </div>
-      </aside>
+        </aside>
 
-      <main className="workspace">
+        <main className="workspace" id="main-content">
         {isModuleView(view) ? (
-          <ModuleScreen view={view} projectList={projectList} />
+          <>
+            <ProjectContextBar
+              projects={projectList}
+              projectId={selectedProject?.id ?? DEFAULT_PROJECT_ID}
+              onChange={(projectId) => navigateInApp({ view, projectId, tab: "overview" })}
+              onOpen={() => selectedProject && openProject(selectedProject.id)}
+            />
+            <ModuleScreen
+              view={view}
+              projectList={projectList}
+              tasks={tasks}
+              onCreateProject={openNewProjectDialog}
+              onOpenProject={openProject}
+              onUpdateTask={updateTask}
+              onFeedback={showFeedback}
+            />
+          </>
         ) : isCockpitView(view) ? (
           selectedProject ? (
             <BookCockpit
               project={selectedProject}
+              projects={projectList}
               activeTab={activeBookTab}
               onTabChange={handleBookTabChange}
+              onSelectProject={(projectId) => {
+                navigateInApp({ view, projectId, tab: activeBookTab });
+                resetPageScroll();
+              }}
+              onCreateProject={showCreateProjectAction ? openNewProjectDialog : undefined}
               onShareStatus={openSharedStatus}
+              onBackToOverview={returnToWorkspaceOverview}
+              onAddChapter={addChapterToProject}
+              onUpdateChapter={updateChapter}
+              onUpdateProjectStatus={updateProjectStatus}
+              onSetApproval={setProjectApproval}
             />
           ) : (
             <ProjectEmptyState />
@@ -234,17 +468,27 @@ export default function App() {
         ) : (
           <ProjectOverview
             projects={projectList}
-            onCreateProject={() => setIsNewProjectOpen(true)}
+            onCreateProject={openNewProjectDialog}
             onSelectProject={(projectId) => {
-              setSelectedProjectId(projectId);
-              setActiveBookTab("overview");
-              setView("projects");
+              openProject(projectId);
             }}
           />
         )}
-      </main>
+        <PageUtilityNav
+          backLabel={isCockpitView(view) ? "Zur Projektübersicht" : "Zur Übersicht"}
+          onBack={view === "overview" ? undefined : returnToWorkspaceOverview}
+        />
+        </main>
 
-      {isNewProjectOpen && <NewProjectDialog onClose={() => setIsNewProjectOpen(false)} onCreate={createProject} />}
-    </div>
+        {isNewProjectOpen && <NewProjectDialog onClose={closeNewProjectDialog} onCreate={createProject} />}
+        {notice && <ActionNotice notice={notice} onDismiss={() => setNotice(undefined)} />}
+        <ImprimaAssist
+          project={selectedProject}
+          onOpenCommunication={() => {
+            handleViewChange("communication");
+          }}
+        />
+      </div>
+    </>
   );
 }

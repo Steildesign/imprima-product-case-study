@@ -9,4 +9,14 @@ describe("module mock data", () => {
     expect(reportHighlights.length).toBeGreaterThanOrEqual(3);
     expect(communicationThreads.length).toBeGreaterThanOrEqual(3);
   });
+
+  it("keeps calendar fixpoints actionable for production planning", () => {
+    for (const event of calendarEvents) {
+      expect(event.projectId).toBeTruthy();
+      expect(event.priority).toMatch(/kritisch|hoch|stabil/);
+      expect(event.impact.length).toBeGreaterThan(20);
+    }
+    expect(calendarEvents.map((event) => event.type)).toContain("Deadline");
+    expect(calendarEvents.map((event) => event.type)).toContain("Preflight");
+  });
 });
