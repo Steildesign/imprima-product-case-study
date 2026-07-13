@@ -10,6 +10,7 @@ import { StatusBadge } from "../components/StatusBadge";
 import { buildSharedStatus } from "../domain/sharedStatus";
 import type { FeasibilityLevel } from "../domain/sharedStatus";
 import type { Project } from "../domain/types";
+import { prependBasePath } from "../domain/appPath";
 
 interface SharedStatusPageProps {
   project: Project;
@@ -26,7 +27,9 @@ export function SharedStatusPage({ project, onOpenPrototype }: SharedStatusPageP
   const [copyState, setCopyState] = useState("Ansichtslink kopieren");
   const status = buildSharedStatus(project);
   const shareUrl =
-    typeof window === "undefined" ? status.sharePath : `${window.location.origin}${status.sharePath}`;
+    typeof window === "undefined"
+      ? prependBasePath(status.sharePath)
+      : `${window.location.origin}${prependBasePath(status.sharePath)}`;
   const reportDate = new Intl.DateTimeFormat("de-DE", { dateStyle: "medium" }).format(new Date());
 
   const copyShareLink = async () => {

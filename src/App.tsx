@@ -32,6 +32,7 @@ import { ReportsScreen } from "./screens/ReportsScreen";
 import { SharedStatusPage } from "./screens/SharedStatusPage";
 import { TasksScreen } from "./screens/TasksScreen";
 import { getSharedStatusPath } from "./domain/sharedStatus";
+import { prependBasePath, stripBasePath } from "./domain/appPath";
 
 type CockpitView = "projects" | "corrections" | "approval";
 type ModuleView = "tasks" | "files" | "calendar" | "reports" | "communication";
@@ -107,11 +108,13 @@ function ModuleScreen({
 }
 
 function getRouteMode(): RouteMode {
-  if (window.location.pathname === CASE_STUDY_PATH) {
+  const pathname = stripBasePath(window.location.pathname);
+
+  if (pathname === CASE_STUDY_PATH) {
     return "case-study";
   }
 
-  if (window.location.pathname.startsWith(SHARED_STATUS_PREFIX)) {
+  if (pathname.startsWith(SHARED_STATUS_PREFIX)) {
     return "shared-status";
   }
 
@@ -119,11 +122,13 @@ function getRouteMode(): RouteMode {
 }
 
 function getSharedStatusProjectId(): string | undefined {
-  if (!window.location.pathname.startsWith(SHARED_STATUS_PREFIX)) {
+  const pathname = stripBasePath(window.location.pathname);
+
+  if (!pathname.startsWith(SHARED_STATUS_PREFIX)) {
     return undefined;
   }
 
-  return decodeURIComponent(window.location.pathname.slice(SHARED_STATUS_PREFIX.length)) || undefined;
+  return decodeURIComponent(pathname.slice(SHARED_STATUS_PREFIX.length)) || undefined;
 }
 
 export default function App() {
@@ -205,7 +210,7 @@ export default function App() {
     window.history.replaceState(
       {},
       "",
-      `/${createAppNavigationSearch({ view, projectId: selectedProject.id, tab: activeBookTab })}`,
+      prependBasePath(`/${createAppNavigationSearch({ view, projectId: selectedProject.id, tab: activeBookTab })}`),
     );
   }, [activeBookTab, routeMode, selectedProject, selectedProjectId, view]);
 
@@ -214,7 +219,7 @@ export default function App() {
     setView(navigation.view);
     setSelectedProjectId(navigation.projectId);
     setActiveBookTab(navigation.tab);
-    window.history[`${mode}State`]({}, "", `/${createAppNavigationSearch(navigation)}`);
+    window.history[`${mode}State`]({}, "", prependBasePath(`/${createAppNavigationSearch(navigation)}`));
   };
 
   const handleViewChange = (nextView: ViewId) => {
@@ -249,7 +254,7 @@ export default function App() {
   };
 
   const openSharedStatus = (projectId: string) => {
-    window.history.pushState({}, "", getSharedStatusPath(projectId));
+    window.history.pushState({}, "", prependBasePath(getSharedStatusPath(projectId)));
     setRouteMode("shared-status");
     resetPageScroll();
   };
@@ -392,11 +397,11 @@ export default function App() {
           {appNavItems.map((item) => (
             <a
               key={item.id}
-              href={`/${createAppNavigationSearch({
+              href={prependBasePath(`/${createAppNavigationSearch({
                 view: item.id,
                 projectId: selectedProject?.id ?? DEFAULT_PROJECT_ID,
                 tab: item.id === "projects" ? "overview" : getBookTabForView(item.id, activeBookTab),
-              })}`}
+              })}`)}
               className={`nav-item${view === item.id ? " is-active" : ""}`}
               aria-label={item.label}
               aria-current={view === item.id ? "page" : undefined}

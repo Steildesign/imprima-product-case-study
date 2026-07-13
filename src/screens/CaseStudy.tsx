@@ -1,6 +1,7 @@
 import { Wordmark } from "../components/Brand";
 import { Button } from "../components/Button";
 import { PageUtilityNav } from "../components/PageUtilityNav";
+import { prependBasePath } from "../domain/appPath";
 
 interface CaseStudyProps {
   onOpenPrototype: () => void;
@@ -171,7 +172,7 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
           </p>
         </div>
         <img
-          src="/brand/imprima-logo-identity.png"
+          src={prependBasePath("/brand/imprima-logo-identity.png")}
           alt="Imprima Logo-Identität und visuelle Markenbausteine"
           width={1672}
           height={941}
@@ -179,7 +180,7 @@ export function CaseStudy({ onOpenPrototype }: CaseStudyProps) {
           decoding="async"
         />
         <img
-          src="/brand/imprima-ui-kit.png"
+          src={prependBasePath("/brand/imprima-ui-kit.png")}
           alt="Imprima UI Kit mit Komponenten, Farben und Produktscreens"
           width={1672}
           height={941}
